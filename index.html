@@ -1,1418 +1,2456 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>⚔️ FUEL FIGHTER — Система Охотника</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg:#05070d;
-    --panel:rgba(13,19,31,.88);
-    --panel-soft:rgba(9,13,22,.55);
-    --panel-flat:rgba(0,10,26,.32);
-    --border:rgba(0,210,255,.14);
-    --border-soft:rgba(255,255,255,.05);
-    --cyan:#00e5ff;
-    --cyan-dim:#4fb9d6;
-    --gold:#ffcb3d;
-    --purple:#b475ff;
-    --pink:#ff5c8f;
-    --green:#3ee888;
-    --text:#dbe9fb;
-    --text-dim:#7291b3;
-    --text-faint:#3d5474;
-    --r-lg:28px;
-    --r-md:16px;
-    --r-sm:10px;
-    --f-display:'Rajdhani',system-ui,sans-serif;
-    --f-mono:'JetBrains Mono',ui-monospace,monospace;
-    --f-body:'Inter',system-ui,sans-serif;
-  }
-  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-  html,body{height:100%;}
-  body{
-    background:
-      radial-gradient(circle at 15% -10%, rgba(0,140,255,.08), transparent 45%),
-      radial-gradient(circle at 100% 110%, rgba(180,90,255,.06), transparent 50%),
-      var(--bg);
-    color:var(--text);
-    font-family:var(--f-body);
-    min-height:100dvh;
-    display:flex;
-    justify-content:center;
-    align-items:flex-start;
-    padding:16px 12px;
-  }
-  ::selection{background:rgba(0,229,255,.25);}
-  .app{max-width:840px;width:100%;position:relative;}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>⚔️ FUEL FIGHTER — Система Охотника</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================================
+           БАЗОВЫЕ ПЕРЕМЕННЫЕ
+           ============================================================ */
+        :root {
+            --bg: #05070d;
+            --panel: rgba(13, 19, 31, 0.88);
+            --panel-soft: rgba(9, 13, 22, 0.55);
+            --panel-flat: rgba(0, 10, 26, 0.32);
+            --border: rgba(0, 210, 255, 0.14);
+            --border-soft: rgba(255, 255, 255, 0.05);
+            --cyan: #00e5ff;
+            --cyan-dim: #4fb9d6;
+            --gold: #ffcb3d;
+            --purple: #b475ff;
+            --pink: #ff5c8f;
+            --green: #3ee888;
+            --text: #dbe9fb;
+            --text-dim: #7291b3;
+            --text-faint: #3d5474;
+            --r-lg: 28px;
+            --r-md: 16px;
+            --r-sm: 10px;
+            --f-display: 'Rajdhani', system-ui, sans-serif;
+            --f-mono: 'JetBrains Mono', ui-monospace, monospace;
+            --f-body: 'Inter', system-ui, sans-serif;
+        }
 
-  /* ---------- boot overlay ---------- */
-  .boot{
-    position:fixed;inset:0;z-index:200;background:#03050a;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
-    transition:opacity .5s ease, visibility .5s ease;
-  }
-  .boot.hide{opacity:0;visibility:hidden;pointer-events:none;}
-  .boot .glyph{font-size:34px;filter:drop-shadow(0 0 14px rgba(0,229,255,.5));animation:pulse 1.6s ease-in-out infinite;}
-  .boot .line{font-family:var(--f-mono);font-size:11px;letter-spacing:3px;color:var(--cyan-dim);text-transform:uppercase;}
-  .boot .track{width:180px;height:2px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;}
-  .boot .track i{display:block;height:100%;width:30%;background:linear-gradient(90deg,transparent,var(--cyan),transparent);animation:scan 1.1s linear infinite;}
-  @keyframes scan{0%{transform:translateX(-100%);}100%{transform:translateX(400%);}}
-  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.55;}}
+        /* ============================================================
+           СБРОС
+           ============================================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        html,
+        body {
+            height: 100%;
+        }
+        body {
+            background:
+                radial-gradient(circle at 15% -10%, rgba(0, 140, 255, .08), transparent 45%),
+                radial-gradient(circle at 100% 110%, rgba(180, 90, 255, .06), transparent 50%),
+                var(--bg);
+            color: var(--text);
+            font-family: var(--f-body);
+            min-height: 100dvh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 16px 12px;
+        }
+        ::selection {
+            background: rgba(0, 229, 255, .25);
+        }
+        .app {
+            max-width: 840px;
+            width: 100%;
+            position: relative;
+        }
 
-  /* ---------- shell ---------- */
-  .glass{
-    background:var(--panel);
-    backdrop-filter:blur(20px);
-    border-radius:var(--r-lg);
-    padding:20px 16px 22px;
-    border:1px solid var(--border);
-    box-shadow:0 0 40px rgba(0,180,255,.05), inset 0 1px 0 rgba(255,255,255,.03);
-  }
-  .header{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
-  .header h1{
-    font-family:var(--f-display);font-size:23px;font-weight:700;letter-spacing:.5px;
-    background:linear-gradient(135deg,#fff,var(--cyan));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
-  }
-  .header h1 small{
-    display:block;font-family:var(--f-mono);font-size:10px;letter-spacing:2px;color:var(--text-dim);font-weight:500;-webkit-text-fill-color:var(--text-dim);text-transform:uppercase;
-  }
-  .badges{display:flex;gap:6px;flex-wrap:wrap;align-content:flex-start;}
-  .badge{
-    font-family:var(--f-mono);background:rgba(0,180,255,.06);border:1px solid rgba(0,180,255,.1);
-    padding:3px 12px;border-radius:30px;font-size:10px;font-weight:600;color:var(--text-dim);
-    text-transform:uppercase;letter-spacing:.5px;
-  }
-  .badge.gold{color:var(--gold);border-color:rgba(255,203,61,.18);}
-  .badge.cyan{color:var(--cyan);border-color:rgba(0,229,255,.15);}
+        /* ============================================================
+           BOOT
+           ============================================================ */
+        .boot {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: #03050a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            transition: opacity .5s ease, visibility .5s ease;
+        }
+        .boot.hide {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .boot .glyph {
+            font-size: 34px;
+            filter: drop-shadow(0 0 14px rgba(0, 229, 255, .5));
+            animation: pulse 1.6s ease-in-out infinite;
+        }
+        .boot .line {
+            font-family: var(--f-mono);
+            font-size: 11px;
+            letter-spacing: 3px;
+            color: var(--cyan-dim);
+            text-transform: uppercase;
+        }
+        .boot .track {
+            width: 180px;
+            height: 2px;
+            background: rgba(255, 255, 255, .06);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .boot .track i {
+            display: block;
+            height: 100%;
+            width: 30%;
+            background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+            animation: scan 1.1s linear infinite;
+        }
+        @keyframes scan {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(400%);
+            }
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: .55;
+            }
+        }
 
-  /* ---------- stats ---------- */
-  .stats{
-    background:var(--panel-flat);border-radius:20px;padding:12px 14px;margin-bottom:14px;
-    display:grid;grid-template-columns:1fr 1fr;gap:3px 16px;border:1px solid var(--border-soft);
-  }
-  .stat{display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.02);font-size:12px;}
-  .stat:nth-last-child(2),.stat:last-child{border-bottom:none;}
-  .stat .label{color:var(--text-dim);font-size:11px;}
-  .stat .value{font-weight:700;font-family:var(--f-mono);font-size:13px;}
-  .stat .value.cyan{color:var(--cyan);}
-  .stat .value.gold{color:var(--gold);}
-  .stat .value.purple{color:var(--purple);}
-  .xp-bar{grid-column:1/-1;margin-top:5px;}
-  .xp-bar .track{width:100%;height:6px;background:rgba(255,255,255,.05);border-radius:10px;overflow:hidden;}
-  .xp-bar .fill{height:100%;width:0%;background:linear-gradient(90deg,#00b4ff,var(--purple));border-radius:10px;transition:width .8s cubic-bezier(.34,1.56,.64,1);}
-  .xp-bar .info{display:flex;justify-content:space-between;font-size:9px;color:var(--text-faint);margin-top:3px;font-family:var(--f-mono);}
+        /* ============================================================
+           ОСНОВНАЯ ОБОЛОЧКА
+           ============================================================ */
+        .glass {
+            background: var(--panel);
+            backdrop-filter: blur(20px);
+            border-radius: var(--r-lg);
+            padding: 20px 16px 22px;
+            border: 1px solid var(--border);
+            box-shadow: 0 0 40px rgba(0, 180, 255, .05), inset 0 1px 0 rgba(255, 255, 255, .03);
+        }
 
-  /* ---------- tabs ---------- */
-  .tabs{
-    display:flex;gap:4px;margin-bottom:16px;background:rgba(0,5,15,.35);border-radius:30px;
-    padding:4px;border:1px solid var(--border-soft);flex-wrap:wrap;
-  }
-  .tab{
-    flex:1;min-width:34px;padding:6px 8px;border:none;background:transparent;color:var(--text-dim);
-    font-weight:600;font-size:9px;border-radius:24px;cursor:pointer;transition:.25s;
-    text-transform:uppercase;letter-spacing:.3px;text-align:center;font-family:var(--f-display);
-  }
-  .tab.active{background:rgba(0,180,255,.09);color:var(--cyan);box-shadow:inset 0 0 0 1px rgba(0,229,255,.12);}
-  .tab:active{transform:scale(.94);}
+        /* ============================================================
+           ШАПКА
+           ============================================================ */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .header h1 {
+            font-family: var(--f-display);
+            font-size: 23px;
+            font-weight: 700;
+            letter-spacing: .5px;
+            background: linear-gradient(135deg, #fff, var(--cyan));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header h1 small {
+            display: block;
+            font-family: var(--f-mono);
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            font-weight: 500;
+            -webkit-text-fill-color: var(--text-dim);
+            text-transform: uppercase;
+        }
+        .badges {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            align-content: flex-start;
+        }
+        .badge {
+            font-family: var(--f-mono);
+            background: rgba(0, 180, 255, .06);
+            border: 1px solid rgba(0, 180, 255, .1);
+            padding: 3px 12px;
+            border-radius: 30px;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+        .badge.gold {
+            color: var(--gold);
+            border-color: rgba(255, 203, 61, .18);
+        }
+        .badge.cyan {
+            color: var(--cyan);
+            border-color: rgba(0, 229, 255, .15);
+        }
 
-  .content{display:none;animation:fade .35s ease;}
-  .content.active{display:block;}
-  @keyframes fade{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
+        /* ============================================================
+           СТАТЫ
+           ============================================================ */
+        .stats {
+            background: var(--panel-flat);
+            border-radius: 20px;
+            padding: 12px 14px;
+            margin-bottom: 14px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3px 16px;
+            border: 1px solid var(--border-soft);
+        }
+        .stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 3px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, .02);
+            font-size: 12px;
+        }
+        .stat:nth-last-child(2),
+        .stat:last-child {
+            border-bottom: none;
+        }
+        .stat .label {
+            color: var(--text-dim);
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .stat .label svg {
+            width: 14px;
+            height: 14px;
+            fill: none;
+            stroke: var(--text-dim);
+            stroke-width: 1.5;
+        }
+        .stat .value {
+            font-weight: 700;
+            font-family: var(--f-mono);
+            font-size: 13px;
+        }
+        .stat .value.cyan {
+            color: var(--cyan);
+        }
+        .stat .value.gold {
+            color: var(--gold);
+        }
+        .stat .value.purple {
+            color: var(--purple);
+        }
+        .stat .value.pink {
+            color: var(--pink);
+        }
+        .xp-bar {
+            grid-column: 1/-1;
+            margin-top: 5px;
+        }
+        .xp-bar .track {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, .05);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .xp-bar .fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00b4ff, var(--purple));
+            border-radius: 10px;
+            transition: width .8s cubic-bezier(.34, 1.56, .64, 1);
+        }
+        .xp-bar .info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 9px;
+            color: var(--text-faint);
+            margin-top: 3px;
+            font-family: var(--f-mono);
+        }
 
-  h3.section-title{font-family:var(--f-display);font-size:13px;letter-spacing:.5px;color:var(--text-dim);text-transform:uppercase;margin:2px 0 8px;}
+        /* ============================================================
+           ВКЛАДКИ (с SVG-иконками)
+           ============================================================ */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 16px;
+            background: rgba(0, 5, 15, .35);
+            border-radius: 30px;
+            padding: 4px;
+            border: 1px solid var(--border-soft);
+            flex-wrap: wrap;
+        }
+        .tab {
+            flex: 1;
+            min-width: 34px;
+            padding: 6px 8px;
+            border: none;
+            background: transparent;
+            color: var(--text-dim);
+            font-weight: 600;
+            font-size: 9px;
+            border-radius: 24px;
+            cursor: pointer;
+            transition: .25s;
+            text-transform: uppercase;
+            letter-spacing: .3px;
+            text-align: center;
+            font-family: var(--f-display);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+        .tab svg {
+            width: 16px;
+            height: 16px;
+            fill: none;
+            stroke: var(--text-dim);
+            stroke-width: 1.8;
+            transition: .25s;
+            flex-shrink: 0;
+        }
+        .tab.active {
+            background: rgba(0, 180, 255, .09);
+            color: var(--cyan);
+            box-shadow: inset 0 0 0 1px rgba(0, 229, 255, .12);
+        }
+        .tab.active svg {
+            stroke: var(--cyan);
+            filter: drop-shadow(0 0 4px rgba(0, 229, 255, .3));
+        }
+        .tab:active {
+            transform: scale(.94);
+        }
 
-  /* ---------- quests ---------- */
-  .quest-list{display:flex;flex-direction:column;gap:6px;}
-  .quest{
-    background:var(--panel-flat);border-radius:14px;padding:10px 12px;display:flex;align-items:center;gap:10px;
-    border:1px solid var(--border-soft);cursor:pointer;transition:.25s;user-select:none;touch-action:manipulation;
-  }
-  .quest:active{transform:scale(.97);}
-  .quest.done{opacity:.45;}
-  .quest.done .q-title{text-decoration:line-through;color:var(--text-faint);}
-  .quest .check{
-    width:20px;height:20px;border-radius:50%;border:2px solid rgba(255,255,255,.08);flex-shrink:0;
-    display:flex;align-items:center;justify-content:center;font-size:10px;transition:.25s;color:transparent;
-  }
-  .quest.done .check{border-color:var(--cyan);background:rgba(0,229,255,.08);color:var(--cyan);}
-  .quest .info{flex:1;min-width:0;}
-  .quest .q-title{font-size:12px;font-weight:600;color:var(--text);}
-  .quest .q-desc{font-size:10px;color:var(--text-dim);margin-top:1px;}
-  .quest .q-xp{font-size:10px;color:var(--gold);font-weight:700;font-family:var(--f-mono);background:rgba(255,203,61,.05);padding:2px 10px;border-radius:30px;border:1px solid rgba(255,203,61,.06);flex-shrink:0;}
-  .quest .q-remove{width:22px;height:22px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--text-faint);font-size:13px;border-radius:50%;}
-  .quest .q-remove:active{background:rgba(255,92,143,.1);color:var(--pink);}
-  .quest.custom .q-xp{color:var(--pink);background:rgba(255,92,143,.05);border-color:rgba(255,92,143,.08);}
-  .add-quest-row{display:flex;gap:6px;margin-top:10px;}
-  .foot-row{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:10px;color:var(--text-faint);font-family:var(--f-mono);}
+        .content {
+            display: none;
+            animation: fade .35s ease;
+        }
+        .content.active {
+            display: block;
+        }
+        @keyframes fade {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-  /* ---------- generic buttons ---------- */
-  .btn-group{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
-  .btn{
-    background:rgba(0,180,255,.05);border:1px solid rgba(0,180,255,.08);padding:6px 14px;border-radius:30px;
-    color:var(--text-dim);font-size:11px;cursor:pointer;transition:.2s;font-family:var(--f-mono);touch-action:manipulation;font-weight:500;
-  }
-  .btn:active{transform:scale(.94);}
-  .btn.gold{border-color:rgba(255,203,61,.12);color:var(--gold);}
-  .btn.pink{border-color:rgba(255,92,143,.12);color:var(--pink);}
-  .btn.wide{width:100%;justify-content:center;text-align:center;}
-  .btn.ghost{background:transparent;border-style:dashed;}
+        /* ============================================================
+           SVG-иконки для статов и других элементов
+           ============================================================ */
+        .icon-sm {
+            width: 16px;
+            height: 16px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            flex-shrink: 0;
+        }
+        .icon-md {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            flex-shrink: 0;
+        }
+        .icon-lg {
+            width: 28px;
+            height: 28px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.6;
+            flex-shrink: 0;
+        }
 
-  /* ---------- training ---------- */
-  .train-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;}
-  .train-card{background:var(--panel-flat);border-radius:14px;padding:10px 12px;border:1px solid var(--border-soft);}
-  .train-card .label{font-size:8px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px;}
-  .train-card .value{font-size:17px;font-weight:700;font-family:var(--f-mono);margin-top:2px;}
-  .train-card .value.cyan{color:var(--cyan);}.train-card .value.gold{color:var(--gold);}
-  .train-card .value.pink{color:var(--pink);}.train-card .value.purple{color:var(--purple);}
-  .train-card .bar{width:100%;height:4px;background:rgba(255,255,255,.05);border-radius:10px;margin-top:5px;overflow:hidden;}
-  .train-card .bar .fill{height:100%;width:0%;border-radius:10px;transition:width .8s ease;}
-  .fill.cyan{background:var(--cyan);}.fill.gold{background:var(--gold);}.fill.pink{background:var(--pink);}.fill.purple{background:var(--purple);}
+        /* ============================================================
+           КВЕСТЫ
+           ============================================================ */
+        .quest-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .quest {
+            background: var(--panel-flat);
+            border-radius: 14px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid var(--border-soft);
+            cursor: pointer;
+            transition: .25s;
+            user-select: none;
+            touch-action: manipulation;
+        }
+        .quest:active {
+            transform: scale(.97);
+        }
+        .quest.done {
+            opacity: .45;
+        }
+        .quest.done .q-title {
+            text-decoration: line-through;
+            color: var(--text-faint);
+        }
+        .quest .check {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, .08);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            transition: .25s;
+            color: transparent;
+        }
+        .quest.done .check {
+            border-color: var(--cyan);
+            background: rgba(0, 229, 255, .08);
+            color: var(--cyan);
+        }
+        .quest .info {
+            flex: 1;
+            min-width: 0;
+        }
+        .quest .q-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        .quest .q-desc {
+            font-size: 10px;
+            color: var(--text-dim);
+            margin-top: 1px;
+        }
+        .quest .q-xp {
+            font-size: 10px;
+            color: var(--gold);
+            font-weight: 700;
+            font-family: var(--f-mono);
+            background: rgba(255, 203, 61, .05);
+            padding: 2px 10px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 203, 61, .06);
+            flex-shrink: 0;
+        }
 
-  .log{
-    background:var(--panel-flat);border-radius:14px;padding:10px 12px;border:1px solid var(--border-soft);
-    max-height:110px;overflow-y:auto;font-size:10px;color:var(--text-dim);font-family:var(--f-mono);
-  }
-  .log .entry{padding:3px 0;border-bottom:1px solid rgba(255,255,255,.02);}
-  .log .entry:last-child{border-bottom:none;}
-  .log .entry .time{color:var(--text-faint);margin-right:6px;}
+        .add-quest-row {
+            display: flex;
+            gap: 6px;
+            margin-top: 10px;
+        }
+        .foot-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 10px;
+            color: var(--text-faint);
+            font-family: var(--f-mono);
+        }
 
-  /* ---------- code topics ---------- */
-  .food-stats,.code-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
-  .food-card{background:var(--panel-flat);border-radius:14px;padding:10px;text-align:center;border:1px solid var(--border-soft);}
-  .food-card .num{font-size:18px;font-weight:700;font-family:var(--f-mono);}
-  .food-card .num.green{color:var(--green);}.food-card .num.blue{color:#3fa9ff;}.food-card .num.gold{color:var(--gold);}
-  .food-card .label{font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
-  .code-topics{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;}
-  .topic-tag{background:var(--panel-flat);border-radius:30px;padding:3px 10px;font-size:9px;color:var(--text-dim);border:1px solid var(--border-soft);font-family:var(--f-mono);}
-  .topic-tag.done{border-color:rgba(0,229,255,.15);color:var(--cyan);}
+        /* ============================================================
+           КНОПКИ
+           ============================================================ */
+        .btn-group {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .btn {
+            background: rgba(0, 180, 255, .05);
+            border: 1px solid rgba(0, 180, 255, .08);
+            padding: 6px 14px;
+            border-radius: 30px;
+            color: var(--text-dim);
+            font-size: 11px;
+            cursor: pointer;
+            transition: .2s;
+            font-family: var(--f-mono);
+            touch-action: manipulation;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn:active {
+            transform: scale(.94);
+        }
+        .btn svg {
+            width: 14px;
+            height: 14px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.8;
+        }
+        .btn.gold {
+            border-color: rgba(255, 203, 61, .12);
+            color: var(--gold);
+        }
+        .btn.pink {
+            border-color: rgba(255, 92, 143, .12);
+            color: var(--pink);
+        }
+        .btn.wide {
+            width: 100%;
+            justify-content: center;
+            text-align: center;
+        }
+        .btn.ghost {
+            background: transparent;
+            border-style: dashed;
+        }
 
-  /* ---------- heart ---------- */
-  .heart-card{background:var(--panel-flat);border-radius:14px;padding:14px;border:1px solid var(--border-soft);margin-bottom:10px;}
-  .heart-card .name{font-size:16px;font-weight:700;color:var(--pink);font-family:var(--f-display);letter-spacing:.3px;}
-  .heart-card .detail{font-size:10px;color:var(--text-dim);margin-top:5px;}
-  .heart-card .detail span{color:var(--text);}
-  .ideas-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;}
-  .idea-item{
-    background:var(--panel-flat);border-radius:10px;padding:8px 10px;border:1px solid var(--border-soft);
-    font-size:10px;color:var(--text-dim);display:flex;justify-content:space-between;align-items:center;
-    cursor:pointer;transition:.2s;font-family:var(--f-mono);gap:6px;
-  }
-  .idea-item:active{transform:scale(.95);}
-  .idea-item.done{opacity:.35;text-decoration:line-through;}
+        /* ============================================================
+           ТРЕНИРОВКИ
+           ============================================================ */
+        .train-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+        .train-card {
+            background: var(--panel-flat);
+            border-radius: 14px;
+            padding: 10px 12px;
+            border: 1px solid var(--border-soft);
+        }
+        .train-card .label {
+            font-size: 8px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .train-card .label svg {
+            width: 12px;
+            height: 12px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+        }
+        .train-card .value {
+            font-size: 17px;
+            font-weight: 700;
+            font-family: var(--f-mono);
+            margin-top: 2px;
+        }
+        .train-card .value.cyan {
+            color: var(--cyan);
+        }
+        .train-card .value.gold {
+            color: var(--gold);
+        }
+        .train-card .value.pink {
+            color: var(--pink);
+        }
+        .train-card .value.purple {
+            color: var(--purple);
+        }
+        .train-card .bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, .05);
+            border-radius: 10px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        .train-card .bar .fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 10px;
+            transition: width .8s ease;
+        }
+        .fill.cyan {
+            background: var(--cyan);
+        }
+        .fill.gold {
+            background: var(--gold);
+        }
+        .fill.pink {
+            background: var(--pink);
+        }
+        .fill.purple {
+            background: var(--purple);
+        }
 
-  /* ---------- water/food ---------- */
-  .water-track{background:var(--panel-flat);border-radius:14px;padding:12px 14px;border:1px solid var(--border-soft);margin-bottom:12px;}
-  .water-track .info{display:flex;justify-content:space-between;font-size:11px;color:var(--text-dim);font-family:var(--f-mono);}
-  .water-track .bar{width:100%;height:6px;background:rgba(255,255,255,.05);border-radius:10px;overflow:hidden;margin:6px 0;}
-  .water-track .bar .fill{height:100%;width:0%;background:linear-gradient(90deg,#00b4ff,var(--cyan));border-radius:10px;transition:width .8s ease;}
-  .water-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
-  .water-btns button{background:rgba(0,180,255,.04);border:1px solid rgba(0,180,255,.06);padding:4px 12px;border-radius:30px;color:var(--text-dim);font-size:10px;cursor:pointer;transition:.2s;font-family:var(--f-mono);}
-  .water-btns button:active{transform:scale(.94);}
-  .tip{font-size:10px;color:var(--text-dim);background:var(--panel-flat);border-radius:12px;padding:10px;text-align:center;border:1px solid var(--border-soft);font-family:var(--f-mono);line-height:1.5;}
+        .log {
+            background: var(--panel-flat);
+            border-radius: 14px;
+            padding: 10px 12px;
+            border: 1px solid var(--border-soft);
+            max-height: 110px;
+            overflow-y: auto;
+            font-size: 10px;
+            color: var(--text-dim);
+            font-family: var(--f-mono);
+        }
+        .log .entry {
+            padding: 3px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, .02);
+        }
+        .log .entry:last-child {
+            border-bottom: none;
+        }
+        .log .entry .time {
+            color: var(--text-faint);
+            margin-right: 6px;
+        }
 
-  /* ---------- inventory / achievements ---------- */
-  .inventory-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:6px;margin-bottom:14px;}
-  .artifact{background:var(--panel-flat);border-radius:14px;padding:10px;text-align:center;border:1px solid var(--border-soft);}
-  .artifact .icon{font-size:22px;display:block;margin-bottom:2px;}
-  .artifact .name{font-size:10px;font-weight:600;color:var(--text);}
-  .artifact .effect{font-size:8px;color:var(--text-dim);margin-top:2px;}
-  .artifact.locked{opacity:.3;filter:grayscale(1);}
-  .ach-row{display:flex;align-items:center;gap:10px;background:var(--panel-flat);border-radius:12px;padding:9px 12px;border:1px solid var(--border-soft);margin-bottom:6px;}
-  .ach-row .a-icon{font-size:18px;width:26px;text-align:center;flex-shrink:0;}
-  .ach-row.locked .a-icon{filter:grayscale(1);opacity:.5;}
-  .ach-row .a-info{flex:1;min-width:0;}
-  .ach-row .a-name{font-size:11px;font-weight:600;color:var(--text);}
-  .ach-row.locked .a-name{color:var(--text-dim);}
-  .ach-row .a-desc{font-size:9px;color:var(--text-dim);margin-top:1px;}
-  .ach-row .a-bar{width:100%;height:3px;background:rgba(255,255,255,.05);border-radius:10px;margin-top:4px;overflow:hidden;}
-  .ach-row .a-bar i{display:block;height:100%;background:var(--purple);border-radius:10px;transition:width .6s ease;}
+        /* ============================================================
+           ПИТАНИЕ / КОД
+           ============================================================ */
+        .food-stats,
+        .code-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .food-card {
+            background: var(--panel-flat);
+            border-radius: 14px;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid var(--border-soft);
+        }
+        .food-card .num {
+            font-size: 18px;
+            font-weight: 700;
+            font-family: var(--f-mono);
+        }
+        .food-card .num.green {
+            color: var(--green);
+        }
+        .food-card .num.blue {
+            color: #3fa9ff;
+        }
+        .food-card .num.gold {
+            color: var(--gold);
+        }
+        .food-card .num.cyan {
+            color: var(--cyan);
+        }
+        .food-card .label {
+            font-size: 9px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            margin-top: 2px;
+        }
+        .code-topics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+        .topic-tag {
+            background: var(--panel-flat);
+            border-radius: 30px;
+            padding: 3px 10px;
+            font-size: 9px;
+            color: var(--text-dim);
+            border: 1px solid var(--border-soft);
+            font-family: var(--f-mono);
+        }
+        .topic-tag.done {
+            border-color: rgba(0, 229, 255, .15);
+            color: var(--cyan);
+        }
 
-  /* ---------- radar / profile ---------- */
-  .radar-wrap{background:var(--panel-flat);border-radius:18px;padding:14px;border:1px solid var(--border-soft);display:flex;justify-content:center;margin-bottom:12px;}
-  .heatmap-wrap{background:var(--panel-flat);border-radius:14px;padding:12px 14px;border:1px solid var(--border-soft);margin-bottom:12px;}
-  .heatmap-grid{display:grid;grid-template-columns:repeat(14,1fr);gap:3px;margin-top:8px;}
-  .hcell{aspect-ratio:1;border-radius:3px;background:rgba(255,255,255,.04);}
-  .hcell[data-lvl="1"]{background:rgba(0,229,255,.18);}
-  .hcell[data-lvl="2"]{background:rgba(0,229,255,.4);}
-  .hcell[data-lvl="3"]{background:rgba(0,229,255,.7);}
-  .hcell[data-lvl="4"]{background:var(--cyan);box-shadow:0 0 6px rgba(0,229,255,.5);}
-  .heatmap-legend{display:flex;justify-content:flex-end;align-items:center;gap:4px;margin-top:6px;font-size:8px;color:var(--text-faint);font-family:var(--f-mono);}
+        /* ============================================================
+           ВОДА
+           ============================================================ */
+        .water-track {
+            background: var(--panel-flat);
+            border-radius: 14px;
+            padding: 12px 14px;
+            border: 1px solid var(--border-soft);
+            margin-bottom: 12px;
+        }
+        .water-track .info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-dim);
+            font-family: var(--f-mono);
+        }
+        .water-track .bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, .05);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 6px 0;
+        }
+        .water-track .bar .fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00b4ff, var(--cyan));
+            border-radius: 10px;
+            transition: width .8s ease;
+        }
+        .water-btns {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+        }
+        .water-btns button {
+            background: rgba(0, 180, 255, .04);
+            border: 1px solid rgba(0, 180, 255, .06);
+            padding: 4px 12px;
+            border-radius: 30px;
+            color: var(--text-dim);
+            font-size: 10px;
+            cursor: pointer;
+            transition: .2s;
+            font-family: var(--f-mono);
+        }
+        .water-btns button:active {
+            transform: scale(.94);
+        }
+        .tip {
+            font-size: 10px;
+            color: var(--text-dim);
+            background: var(--panel-flat);
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid var(--border-soft);
+            font-family: var(--f-mono);
+            line-height: 1.5;
+        }
 
-  /* ---------- leaderboard ---------- */
-  .leaderboard{background:var(--panel-flat);border-radius:14px;padding:10px 12px;border:1px solid var(--border-soft);}
-  .leader-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.02);font-size:11px;}
-  .leader-row:last-child{border-bottom:none;}
-  .leader-row .name{color:var(--text-dim);}
-  .leader-row .rank{color:var(--gold);font-weight:600;font-size:9px;}
-  .leader-row .lvl{color:var(--text-faint);font-size:9px;font-family:var(--f-mono);}
-  .leader-row.me{background:rgba(0,180,255,.05);border-radius:8px;padding:5px 8px;margin:3px -8px;border:1px solid rgba(0,180,255,.06);}
-  .leader-row.me .name{color:var(--cyan);font-weight:700;}
+        /* ============================================================
+           БЛИЗКИЕ
+           ============================================================ */
+        .heart-card {
+            background: var(--panel-flat);
+            border-radius: 14px;
+            padding: 14px;
+            border: 1px solid var(--border-soft);
+            margin-bottom: 10px;
+        }
+        .heart-card .name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--pink);
+            font-family: var(--f-display);
+            letter-spacing: .3px;
+        }
+        .heart-card .detail {
+            font-size: 10px;
+            color: var(--text-dim);
+            margin-top: 5px;
+        }
+        .heart-card .detail span {
+            color: var(--text);
+        }
+        .ideas-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px;
+        }
+        .idea-item {
+            background: var(--panel-flat);
+            border-radius: 10px;
+            padding: 8px 10px;
+            border: 1px solid var(--border-soft);
+            font-size: 10px;
+            color: var(--text-dim);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: .2s;
+            font-family: var(--f-mono);
+            gap: 6px;
+        }
+        .idea-item:active {
+            transform: scale(.95);
+        }
+        .idea-item.done {
+            opacity: .35;
+            text-decoration: line-through;
+        }
 
-  /* ---------- progress ---------- */
-  .progress-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px;}
-  .progress-card{background:var(--panel-flat);border-radius:14px;padding:10px;text-align:center;border:1px solid var(--border-soft);}
-  .progress-card .num{font-size:17px;font-weight:700;font-family:var(--f-mono);}
-  .progress-card .label{font-size:8px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
+        /* ============================================================
+           ИНВЕНТАРЬ / АЧИВКИ
+           ============================================================ */
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+        .artifact {
+            background: var(--panel-flat);
+            border-radius: 14px;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid var(--border-soft);
+        }
+        .artifact .icon {
+            font-size: 22px;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .artifact .name {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        .artifact .effect {
+            font-size: 8px;
+            color: var(--text-dim);
+            margin-top: 2px;
+        }
+        .artifact.locked {
+            opacity: .3;
+            filter: grayscale(1);
+        }
 
-  /* ---------- sleep ---------- */
-  .sleep-track{background:var(--panel-flat);border-radius:14px;padding:12px 14px;border:1px solid var(--border-soft);margin-bottom:10px;}
-  .sleep-track .row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:11px;font-family:var(--f-mono);}
-  .sleep-track .row .label{color:var(--text-dim);font-family:var(--f-body);}
-  .sleep-track .row .value{font-weight:700;}
-  .sleep-track .row .value.gold{color:var(--gold);}.sleep-track .row .value.cyan{color:var(--cyan);}
+        .ach-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--panel-flat);
+            border-radius: 12px;
+            padding: 9px 12px;
+            border: 1px solid var(--border-soft);
+            margin-bottom: 6px;
+        }
+        .ach-row .a-icon {
+            font-size: 18px;
+            width: 26px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .ach-row.locked .a-icon {
+            filter: grayscale(1);
+            opacity: .5;
+        }
+        .ach-row .a-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .ach-row .a-name {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        .ach-row.locked .a-name {
+            color: var(--text-dim);
+        }
+        .ach-row .a-desc {
+            font-size: 9px;
+            color: var(--text-dim);
+            margin-top: 1px;
+        }
+        .ach-row .a-bar {
+            width: 100%;
+            height: 3px;
+            background: rgba(255, 255, 255, .05);
+            border-radius: 10px;
+            margin-top: 4px;
+            overflow: hidden;
+        }
+        .ach-row .a-bar i {
+            display: block;
+            height: 100%;
+            background: var(--purple);
+            border-radius: 10px;
+            transition: width .6s ease;
+        }
 
-  /* ---------- analytics ---------- */
-  .analytics-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
-  .analytics-card{background:var(--panel-flat);border-radius:14px;padding:10px 12px;border:1px solid var(--border-soft);}
-  .analytics-card .label{font-size:8px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px;}
-  .analytics-card .value{font-size:16px;font-weight:700;font-family:var(--f-mono);margin-top:2px;}
-  .analytics-card .value.cyan{color:var(--cyan);}.analytics-card .value.gold{color:var(--gold);}
-  .analytics-card .value.purple{color:var(--purple);}.analytics-card .value.pink{color:var(--pink);}
-  .analytics-card .mini-bar{width:100%;height:3px;background:rgba(255,255,255,.05);border-radius:10px;margin-top:5px;overflow:hidden;}
-  .analytics-card .mini-bar .fill{height:100%;border-radius:10px;transition:width .8s ease;}
+        /* ============================================================
+           ПРОФИЛЬ — РАДАР И ТЕПЛОВАЯ КАРТА
+           ============================================================ */
+        .radar-wrap {
+            background: var(--panel-flat);
+            border-radius: 18px;
+            padding: 14px;
+            border: 1px solid var(--border-soft);
+            display: flex;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+        .heatmap-wrap {
+            background: var(--panel-flat);
+            border-radius: 14px;
+            padding: 12px 14px;
+            border: 1px solid var(--border-soft);
+            margin-bottom: 12px;
+        }
+        .heatmap-grid {
+            display: grid;
+            grid-template-columns: repeat(14, 1fr);
+            gap: 3px;
+            margin-top: 8px;
+        }
+        .hcell {
+            aspect-ratio: 1;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, .04);
+        }
+        .hcell[data-lvl="1"] {
+            background: rgba(0, 229, 255, .18);
+        }
+        .hcell[data-lvl="2"] {
+            background: rgba(0, 229, 255, .4);
+        }
+        .hcell[data-lvl="3"] {
+            background: rgba(0, 229, 255, .7);
+        }
+        .hcell[data-lvl="4"] {
+            background: var(--cyan);
+            box-shadow: 0 0 6px rgba(0, 229, 255, .5);
+        }
+        .heatmap-legend {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 4px;
+            margin-top: 6px;
+            font-size: 8px;
+            color: var(--text-faint);
+            font-family: var(--f-mono);
+        }
 
-  /* ---------- settings ---------- */
-  .settings-row{display:flex;justify-content:space-between;align-items:center;background:var(--panel-flat);border-radius:12px;padding:11px 14px;border:1px solid var(--border-soft);margin-bottom:6px;}
-  .settings-row .s-label{font-size:11px;color:var(--text);font-weight:500;}
-  .settings-row .s-hint{font-size:9px;color:var(--text-dim);margin-top:2px;}
-  .switch{width:38px;height:22px;border-radius:20px;background:rgba(255,255,255,.08);position:relative;cursor:pointer;flex-shrink:0;transition:.2s;border:1px solid var(--border-soft);}
-  .switch.on{background:rgba(0,229,255,.25);border-color:rgba(0,229,255,.3);}
-  .switch i{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#8ba3bd;transition:.25s;}
-  .switch.on i{left:18px;background:var(--cyan);box-shadow:0 0 6px rgba(0,229,255,.6);}
-  .danger-zone{margin-top:14px;padding-top:12px;border-top:1px dashed var(--border-soft);}
+        /* ============================================================
+           ЛИДЕРЫ
+           ============================================================ */
+        .leaderboard {
+            background: var(--panel-flat);
+            border-radius: 14px;
+            padding: 10px 12px;
+            border: 1px solid var(--border-soft);
+        }
+        .leader-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, .02);
+            font-size: 11px;
+        }
+        .leader-row:last-child {
+            border-bottom: none;
+        }
+        .leader-row .name {
+            color: var(--text-dim);
+        }
+        .leader-row .rank {
+            color: var(--gold);
+            font-weight: 600;
+            font-size: 9px;
+        }
+        .leader-row .lvl {
+            color: var(--text-faint);
+            font-size: 9px;
+            font-family: var(--f-mono);
+        }
+        .leader-row.me {
+            background: rgba(0, 180, 255, .05);
+            border-radius: 8px;
+            padding: 5px 8px;
+            margin: 3px -8px;
+            border: 1px solid rgba(0, 180, 255, .06);
+        }
+        .leader-row.me .name {
+            color: var(--cyan);
+            font-weight: 700;
+        }
 
-  /* ---------- toast ---------- */
-  .toast{
-    position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px) scale(.95);
-    background:rgba(3,6,14,.96);backdrop-filter:blur(14px);border:1px solid rgba(0,180,255,.15);
-    border-radius:18px;padding:12px 22px;box-shadow:0 20px 60px rgba(0,0,0,.8);z-index:300;
-    max-width:90%;text-align:center;font-family:var(--f-mono);font-size:12px;color:var(--text);
-    transition:all .5s cubic-bezier(.34,1.56,.64,1);opacity:0;pointer-events:none;
-  }
-  .toast.show{opacity:1;transform:translateX(-50%) translateY(0) scale(1);pointer-events:auto;}
-  .toast .t-title{color:var(--cyan);font-weight:700;font-size:10px;letter-spacing:2px;text-transform:uppercase;}
-  .toast .t-body{margin-top:3px;color:var(--text-dim);font-size:11px;font-family:var(--f-body);}
-  .toast .t-xp{color:var(--gold);font-weight:700;}
+        /* ============================================================
+           ПРОГРЕСС
+           ============================================================ */
+        .progress-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+        .progress-card {
+            background: var(--panel-flat);
+            border-radius: 14px;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid var(--border-soft);
+        }
+        .progress-card .num {
+            font-size: 17px;
+            font-weight: 700;
+            font-family: var(--f-mono);
+        }
+        .progress-card .label {
+            font-size: 8px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            margin-top: 2px;
+        }
 
-  .footer{margin-top:16px;display:flex;justify-content:space-between;align-items:center;font-size:9px;color:var(--text-faint);font-family:var(--f-mono);border-top:1px solid var(--border-soft);padding-top:14px;}
+        /* ============================================================
+           СОН
+           ============================================================ */
+        .sleep-track {
+            background: var(--panel-flat);
+            border-radius: 14px;
+            padding: 12px 14px;
+            border: 1px solid var(--border-soft);
+            margin-bottom: 10px;
+        }
+        .sleep-track .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 0;
+            font-size: 11px;
+            font-family: var(--f-mono);
+        }
+        .sleep-track .row .label {
+            color: var(--text-dim);
+            font-family: var(--f-body);
+        }
+        .sleep-track .row .value {
+            font-weight: 700;
+        }
+        .sleep-track .row .value.gold {
+            color: var(--gold);
+        }
+        .sleep-track .row .value.cyan {
+            color: var(--cyan);
+        }
 
-  @media (max-width:600px){
-    .stats{grid-template-columns:1fr 1fr;gap:2px 10px;padding:10px 12px;}
-    .glass{padding:16px 12px 20px;border-radius:22px;}
-    .header h1{font-size:19px;}
-    .tab{font-size:8px;padding:5px 6px;min-width:30px;}
-    .train-stats{grid-template-columns:1fr 1fr;}
-    .analytics-grid{grid-template-columns:1fr;}
-    .ideas-grid{grid-template-columns:1fr;}
-  }
-  @media (max-width:400px){
-    .food-stats{grid-template-columns:1fr;}
-    .progress-grid{grid-template-columns:1fr;}
-  }
-</style>
+        /* ============================================================
+           АНАЛИТИКА
+           ============================================================ */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+        .analytics-card {
+            background: var(--panel-flat);
+            border-radius: 14px;
+            padding: 10px 12px;
+            border: 1px solid var(--border-soft);
+        }
+        .analytics-card .label {
+            font-size: 8px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+        .analytics-card .value {
+            font-size: 16px;
+            font-weight: 700;
+            font-family: var(--f-mono);
+            margin-top: 2px;
+        }
+        .analytics-card .value.cyan {
+            color: var(--cyan);
+        }
+        .analytics-card .value.gold {
+            color: var(--gold);
+        }
+        .analytics-card .value.purple {
+            color: var(--purple);
+        }
+        .analytics-card .value.pink {
+            color: var(--pink);
+        }
+        .analytics-card .mini-bar {
+            width: 100%;
+            height: 3px;
+            background: rgba(255, 255, 255, .05);
+            border-radius: 10px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        .analytics-card .mini-bar .fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width .8s ease;
+        }
+
+        /* ============================================================
+           НАСТРОЙКИ
+           ============================================================ */
+        .settings-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--panel-flat);
+            border-radius: 12px;
+            padding: 11px 14px;
+            border: 1px solid var(--border-soft);
+            margin-bottom: 6px;
+        }
+        .settings-row .s-label {
+            font-size: 11px;
+            color: var(--text);
+            font-weight: 500;
+        }
+        .settings-row .s-hint {
+            font-size: 9px;
+            color: var(--text-dim);
+            margin-top: 2px;
+        }
+        .switch {
+            width: 38px;
+            height: 22px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, .08);
+            position: relative;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: .2s;
+            border: 1px solid var(--border-soft);
+        }
+        .switch.on {
+            background: rgba(0, 229, 255, .25);
+            border-color: rgba(0, 229, 255, .3);
+        }
+        .switch i {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #8ba3bd;
+            transition: .25s;
+        }
+        .switch.on i {
+            left: 18px;
+            background: var(--cyan);
+            box-shadow: 0 0 6px rgba(0, 229, 255, .6);
+        }
+        .danger-zone {
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px dashed var(--border-soft);
+        }
+
+        /* ============================================================
+           ТОСТ
+           ============================================================ */
+        .toast {
+            position: fixed;
+            bottom: 26px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px) scale(.95);
+            background: rgba(3, 6, 14, .96);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(0, 180, 255, .15);
+            border-radius: 18px;
+            padding: 12px 22px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .8);
+            z-index: 300;
+            max-width: 90%;
+            text-align: center;
+            font-family: var(--f-mono);
+            font-size: 12px;
+            color: var(--text);
+            transition: all .5s cubic-bezier(.34, 1.56, .64, 1);
+            opacity: 0;
+            pointer-events: none;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0) scale(1);
+            pointer-events: auto;
+        }
+        .toast .t-title {
+            color: var(--cyan);
+            font-weight: 700;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .toast .t-body {
+            margin-top: 3px;
+            color: var(--text-dim);
+            font-size: 11px;
+            font-family: var(--f-body);
+        }
+        .toast .t-xp {
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        .footer {
+            margin-top: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 9px;
+            color: var(--text-faint);
+            font-family: var(--f-mono);
+            border-top: 1px solid var(--border-soft);
+            padding-top: 14px;
+        }
+
+        /* ============================================================
+           АДАПТИВ
+           ============================================================ */
+        @media (max-width: 600px) {
+            .stats {
+                grid-template-columns: 1fr 1fr;
+                gap: 2px 10px;
+                padding: 10px 12px;
+            }
+            .glass {
+                padding: 16px 12px 20px;
+                border-radius: 22px;
+            }
+            .header h1 {
+                font-size: 19px;
+            }
+            .tab {
+                font-size: 8px;
+                padding: 5px 6px;
+                min-width: 30px;
+            }
+            .tab svg {
+                width: 13px;
+                height: 13px;
+            }
+            .train-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+            .ideas-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 400px) {
+            .food-stats {
+                grid-template-columns: 1fr;
+            }
+            .progress-grid {
+                grid-template-columns: 1fr;
+            }
+            .stats {
+                grid-template-columns: 1fr 1fr;
+                gap: 1px 6px;
+            }
+            .stat .label {
+                font-size: 9px;
+            }
+            .stat .label svg {
+                width: 12px;
+                height: 12px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-  <div class="boot" id="boot">
-    <div class="glyph">⚔️</div>
-    <div class="line">ИНИЦИАЛИЗАЦИЯ СИСТЕМЫ</div>
-    <div class="track"><i></i></div>
-  </div>
-
-  <div class="app">
-    <div class="glass">
-      <div class="header">
-        <h1>⚔️ FUEL FIGHTER<small>▸ Система активирована</small></h1>
-        <div class="badges">
-          <span class="badge gold" id="rankBadge">E-RANK</span>
-          <span class="badge cyan" id="levelBadge">LV. 1</span>
-          <span class="badge" id="streakBadge">🔥 0 дн.</span>
-        </div>
-      </div>
-
-      <div class="stats" id="statsGrid"></div>
-
-      <div class="tabs" id="tabs">
-        <button class="tab active" data-tab="tab-quests">📋 Квесты</button>
-        <button class="tab" data-tab="tab-train">🥊 Тренир.</button>
-        <button class="tab" data-tab="tab-code">💻 ИБ&nbsp;Код</button>
-        <button class="tab" data-tab="tab-heart">❤️ Близкие</button>
-        <button class="tab" data-tab="tab-food">🍎 Топливо</button>
-        <button class="tab" data-tab="tab-sleep">🌙 Сон</button>
-        <button class="tab" data-tab="tab-inventory">🏅 Награды</button>
-        <button class="tab" data-tab="tab-profile">🕸️ Профиль</button>
-        <button class="tab" data-tab="tab-leaders">🏆 Лидеры</button>
-        <button class="tab" data-tab="tab-progress">📸 Замеры</button>
-        <button class="tab" data-tab="tab-analytics">📊 Аналит.</button>
-        <button class="tab" data-tab="tab-settings">⚙️ Настр.</button>
-      </div>
-
-      <div class="content active" id="tab-quests">
-        <div class="quest-list" id="questList"></div>
-        <div class="add-quest-row">
-          <button class="btn ghost wide" id="addQuestBtn">＋ Разовый квест</button>
-        </div>
-        <div class="foot-row"><span id="questProgress">0 / 7</span><span>квестов выполнено сегодня</span></div>
-      </div>
-
-      <div class="content" id="tab-train">
-        <div class="train-stats" id="trainStats"></div>
-        <div class="btn-group">
-          <button class="btn" id="trainStrike">🥊 Удары (+5 XP)</button>
-          <button class="btn gold" id="trainStretch">🧘 Растяжка (+10 XP)</button>
-          <button class="btn pink" id="trainTechBtn">📖 Техника (+8 XP)</button>
-        </div>
-        <div class="log" id="trainLog"></div>
-      </div>
-
-      <div class="content" id="tab-code">
-        <div class="code-stats">
-          <div class="food-card"><div class="num green" id="codeHours">0</div><div class="label">Часов учёбы</div></div>
-          <div class="food-card"><div class="num cyan" id="codeTopics">0</div><div class="label">Тем изучено</div></div>
-          <div class="food-card"><div class="num gold" id="codeStreak">0</div><div class="label">Стрик учёбы</div></div>
-        </div>
-        <div class="code-topics" id="codeTopicsList"></div>
-        <div class="btn-group">
-          <button class="btn" id="codeStudy">📚 Учиться (+15 XP)</button>
-          <button class="btn gold" id="codeTopicDone">✅ Тема изучена</button>
-        </div>
-        <div class="log" id="codeLog"></div>
-      </div>
-
-      <div class="content" id="tab-heart">
-        <div class="heart-card">
-          <div class="name">🌹 Близкий человек</div>
-          <div class="detail">🌸 Любимые цветы: <span id="cFlowers"></span></div>
-          <div class="detail">🍽️ Еда: <span id="cFood"></span></div>
-          <div class="detail">📱 ТикТок: <span id="cTiktok"></span></div>
-          <div class="detail" style="margin-top:6px;">💕 Время вместе сегодня: <span id="heartTime" class="cyan">0</span> мин</div>
-        </div>
-        <div class="btn-group">
-          <button class="btn pink" id="heartAddTime">❤️ +30 мин вместе</button>
-          <button class="btn gold" id="heartIdea">💡 Случайная идея</button>
-        </div>
-        <div class="ideas-grid" id="ideasGrid"></div>
-      </div>
-
-      <div class="content" id="tab-food">
-        <div class="food-stats">
-          <div class="food-card"><div class="num green" id="foodCal">0</div><div class="label">Калории</div></div>
-          <div class="food-card"><div class="num blue" id="foodProtein">0</div><div class="label">Белок (г)</div></div>
-          <div class="food-card"><div class="num gold" id="foodProgress">0%</div><div class="label">Норма</div></div>
-        </div>
-        <div class="water-track">
-          <div class="info"><span>💧 Вода</span><span id="waterStatus">0 / 2200 мл</span></div>
-          <div class="bar"><div class="fill" id="waterFill"></div></div>
-          <div class="water-btns">
-            <button data-water="200">🥤 200 мл</button>
-            <button data-water="500">💧 500 мл</button>
-            <button data-water="300">🧊 300 мл</button>
-            <button data-water="reset">🗑️ Сброс</button>
-          </div>
-          <div style="font-size:9px;color:var(--text-faint);margin-top:4px;font-family:var(--f-mono);">⏰ Последний раз: <span id="waterLast">—</span></div>
-        </div>
-        <div class="tip" id="foodTip">🍽️ Добавь продукты, чтобы получить совет</div>
-        <div class="btn-group" style="margin-top:8px;">
-          <button class="btn" id="foodAdd100">➕ +100 ккал</button>
-          <button class="btn gold" id="foodAddProtein">🥩 +30г белка</button>
-        </div>
-      </div>
-
-      <div class="content" id="tab-sleep">
-        <div class="sleep-track">
-          <div class="row"><span class="label">🛌 Время сна</span><span class="value" id="sleepHours">0</span></div>
-          <div class="row"><span class="label">⏰ Лёг спать</span><span class="value" id="sleepBedtime">—</span></div>
-          <div class="row"><span class="label">🌅 Проснулся</span><span class="value" id="sleepWakeup">—</span></div>
-          <div class="row"><span class="label">💤 Качество сна</span><span class="value gold" id="sleepQuality">0%</span></div>
-        </div>
-        <div class="btn-group">
-          <button class="btn" id="sleepStart">🌙 Лечь спать</button>
-          <button class="btn gold" id="sleepWake">☀️ Проснуться</button>
-        </div>
-        <div class="tip" id="sleepTip">💡 Ложись спать до 23:00 для максимального восстановления</div>
-      </div>
-
-      <div class="content" id="tab-inventory">
-        <h3 class="section-title">Артефакты</h3>
-        <div class="inventory-grid" id="inventoryGrid"></div>
-        <h3 class="section-title">Достижения</h3>
-        <div id="achList"></div>
-      </div>
-
-      <div class="content" id="tab-profile">
-        <div class="radar-wrap" id="radarWrap"></div>
-        <div class="heatmap-wrap">
-          <div class="info" style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-dim);font-family:var(--f-mono);">
-            <span>📅 Активность за 28 дней</span><span id="heatmapPct">0%</span>
-          </div>
-          <div class="heatmap-grid" id="heatmapGrid"></div>
-          <div class="heatmap-legend"><span>меньше</span>
-            <div class="hcell" style="width:9px;"></div><div class="hcell" data-lvl="1" style="width:9px;"></div>
-            <div class="hcell" data-lvl="2" style="width:9px;"></div><div class="hcell" data-lvl="3" style="width:9px;"></div>
-            <div class="hcell" data-lvl="4" style="width:9px;"></div><span>больше</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="content" id="tab-leaders">
-        <div class="leaderboard" id="leaderboard"></div>
-      </div>
-
-      <div class="content" id="tab-progress">
-        <div class="progress-grid">
-          <div class="progress-card"><div class="num" id="progressWeight">75 кг</div><div class="label">Вес</div></div>
-          <div class="progress-card"><div class="num" id="progressWaist">85 см</div><div class="label">Талия</div></div>
-          <div class="progress-card"><div class="num" id="progressHips">95 см</div><div class="label">Бёдра</div></div>
-        </div>
-        <button class="btn gold wide" id="progressUpdate">📝 Обновить замеры</button>
-      </div>
-
-      <div class="content" id="tab-analytics">
-        <div class="analytics-grid" id="analyticsGrid"></div>
-        <div class="tip" style="margin-top:10px;" id="analyticsTip">📈 Сводка твоего прогресса</div>
-      </div>
-
-      <div class="content" id="tab-settings">
-        <h3 class="section-title">Общие</h3>
-        <div class="settings-row">
-          <div><div class="s-label">🔊 Звуковые эффекты</div><div class="s-hint">Тоны при получении опыта и наградах</div></div>
-          <div class="switch on" id="soundSwitch"><i></i></div>
-        </div>
-        <div class="settings-row" id="editCompanionRow" style="cursor:pointer;">
-          <div><div class="s-label">🌹 Данные о близком человеке</div><div class="s-hint">Цветы, еда, ТикТок</div></div>
-          <span style="color:var(--text-faint);">✎</span>
-        </div>
-        <h3 class="section-title" style="margin-top:14px;">Данные</h3>
-        <div class="settings-row" id="exportRow" style="cursor:pointer;">
-          <div><div class="s-label">⬇️ Экспортировать прогресс</div><div class="s-hint">Скачать резервную копию (.json)</div></div>
-          <span style="color:var(--text-faint);">›</span>
-        </div>
-        <div class="settings-row" id="importRow" style="cursor:pointer;">
-          <div><div class="s-label">⬆️ Импортировать прогресс</div><div class="s-hint">Загрузить резервную копию</div></div>
-          <span style="color:var(--text-faint);">›</span>
-        </div>
-        <input type="file" id="importFile" accept="application/json" hidden>
-        <div class="tip" id="storageNote" style="margin-top:10px;"></div>
-        <div class="danger-zone">
-          <button class="btn pink wide" id="resetBtn">⟳ Перерождение (сброс всего прогресса)</button>
-        </div>
-      </div>
-
-      <div class="footer">
-        <span>🗡️ СИСТЕМА v.3.0</span>
-        <span id="bootTime">—</span>
-      </div>
+    <!-- BOOT -->
+    <div class="boot" id="boot">
+        <div class="glyph">⚔️</div>
+        <div class="line">ИНИЦИАЛИЗАЦИЯ СИСТЕМЫ</div>
+        <div class="track"><i></i></div>
     </div>
-  </div>
-
-  <div class="toast" id="toast">
-    <div class="t-title" id="toastTitle">СИСТЕМА</div>
-    <div class="t-body" id="toastBody">Добро пожаловать, Охотник.</div>
-  </div>
-
-<script>
-(function(){
-'use strict';
-
-/* ============================================================
-   CONFIG — единственный источник правды для контента
-============================================================ */
-const CONFIG = {
-  WATER_GOAL: 2200,
-  CAL_GOAL: 2100,
-  PROTEIN_GOAL: 150,
-  BASE_XP: 100,
-  RANKS: [
-    {id:'E',  label:'E-RANK',   totalXP:0},
-    {id:'D',  label:'D-RANK',   totalXP:800},
-    {id:'C',  label:'C-RANK',   totalXP:2200},
-    {id:'B',  label:'B-RANK',   totalXP:5000},
-    {id:'A',  label:'A-RANK',   totalXP:10000},
-    {id:'S',  label:'S-RANK',   totalXP:20000},
-    {id:'SSS',label:'SSS-RANK', totalXP:50000}
-  ],
-  QUESTS: [
-    {id:'wake',     label:'🌅 Восход',        desc:'Проснуться до 7:00',      xp:10, stat:'will', val:1},
-    {id:'exercise', label:'🏃 Зарядка',        desc:'10+ мин упражнений',      xp:15, stat:'agi',  val:1},
-    {id:'code',     label:'💻 Код',            desc:'30+ мин Python/ИБ',       xp:20, stat:'int',  val:1},
-    {id:'work',     label:'⚔️ Осада',          desc:'Рабочие задачи',          xp:15, stat:'will', val:1},
-    {id:'train',    label:'🥊 Тренировка',     desc:'Каратэ / растяжка',       xp:25, stat:'agi',  val:2},
-    {id:'water',    label:'💧 Восполнение',    desc:'Выпить 2.2+ л воды',      xp:10, stat:'end',  val:1},
-    {id:'sleep',    label:'🌙 Восстановление', desc:'Сон 7.5+ ч',              xp:10, stat:'end',  val:1}
-  ],
-  TOPICS: ['🐍 Python','🔐 Криптография','🌐 Сети','⚡ Алгоритмы','🛡️ ИБ'],
-  STAT_META: {
-    will:{label:'Воля',        short:'ВОЛ', icon:'❤️'},
-    atk: {label:'Атака',       short:'АТК', icon:'🗡️'},
-    def: {label:'Защита',      short:'ЗАЩ', icon:'🛡️'},
-    agi: {label:'Ловкость',    short:'ЛОВ', icon:'⚡'},
-    int: {label:'Интеллект',   short:'ИНТ', icon:'🧠'},
-    end: {label:'Выносливость',short:'ВЫН', icon:'💧'},
-    cha: {label:'Харизма',     short:'ХАР', icon:'💛'},
-    mana:{label:'Мана',        short:'МАН', icon:'🌀'}
-  },
-  DATE_IDEAS: [
-    '🌹 Прогулка с белыми розами','🍽️ Ужин при свечах','🎬 Кино под одеялом','🧘 Йога вдвоём',
-    '🎨 Арт-свидание','🌅 Закат на крыше','🧁 Испечь десерт вместе','🎵 Плейлист друг другу'
-  ],
-  ACHIEVEMENTS: [
-    {id:'streak7',  icon:'🛡️', name:'Железная воля',   desc:'Стрик 7 дней подряд',        target:7,  get:s=>s.streak,               reward:{stat:'will',val:10}},
-    {id:'streak30', icon:'🌑', name:'Тень Монарха',     desc:'Стрик 30 дней подряд',       target:30, get:s=>s.streak,               reward:{all:15}},
-    {id:'level10',  icon:'✨', name:'Пробуждение',      desc:'Достигнут LV. 10',           target:10, get:s=>s.level,                reward:{stat:'mana',val:10}},
-    {id:'topics5',  icon:'📚', name:'Архимаг Кода',     desc:'Изучены все темы ИБ/кода',   target:5,  get:s=>s.code.topics.length,   reward:{stat:'int',val:8}},
-    {id:'hours20',  icon:'💻', name:'Кибер-Охотник',    desc:'20 часов учёбы суммарно',    target:20, get:s=>s.code.hours,           reward:{stat:'int',val:10}},
-    {id:'heart10',  icon:'💞', name:'Хранитель сердца', desc:'10 идей для свиданий выполнено', target:10, get:s=>s.heart.ideasDone.length, reward:{stat:'cha',val:10}},
-    {id:'days30',   icon:'🏛️', name:'Столп дисциплины', desc:'30 полностью выполненных дней', target:30, get:s=>s.daysCompleted,     reward:{stat:'end',val:12}}
-  ],
-  FAKE_HUNTERS: ['Jester','Vex','Raven','Shadow','Lynx','Ghost','Wraith','Phantom']
-};
-
-/* ============================================================
-   STORAGE — работает через артефакт-хранилище Claude;
-   при его отсутствии (файл открыт вне Claude) прогресс
-   держится только в памяти текущей сессии.
-============================================================ */
-const Storage = {
-  available: (typeof window !== 'undefined' && !!window.storage),
-  mem: {},
-  async get(key){
-    if(this.available){
-      try{ const r = await window.storage.get(key,false); return r ? r.value : null; }
-      catch(_){ return null; }
-    }
-    return Object.prototype.hasOwnProperty.call(this.mem,key) ? this.mem[key] : null;
-  },
-  async set(key,value){
-    if(this.available){
-      try{ await window.storage.set(key,value,false); return true; }
-      catch(_){ return false; }
-    }
-    this.mem[key]=value;
-    return true;
-  }
-};
-
-/* ============================================================
-   STATE
-============================================================ */
-const state = {
-  level:1, xp:0, totalXP:0, rankIdx:0,
-  stats:{will:10,atk:10,def:5,agi:15,int:12,end:10,cha:8,mana:5},
-  quests: CONFIG.QUESTS.map(()=>false),
-  customQuests: [],
-  streak:0, lastActiveDate:'', streakAwardedDate:'',
-  water:0, waterLast:null,
-  food:{cal:0,protein:0},
-  artifacts:[], unlockedAchievements:[],
-  totalDays:0, daysCompleted:0,
-  training:{power:0,flex:0,tech:0,endurance:0,log:[]},
-  code:{hours:0,topics:[],streak:0,lastStudyDate:''},
-  heart:{time:0,ideasDone:[]},
-  sleep:{hours:0,bedtime:null,wakeup:null,quality:0},
-  progress:{weight:75,waist:85,hips:95},
-  history:{},
-  settings:{sound:true},
-  companion:{flowers:'Белые розы',food:'Ищет себя',tiktok:'Любит смотреть'}
-};
-let fakeHunters = [];
-
-/* ============================================================
-   DOM CACHE
-============================================================ */
-const $ = {};
-function cacheDom(){
-  ['statsGrid','questList','questProgress','trainStats','trainLog','codeHours','codeTopics','codeStreak',
-   'codeTopicsList','codeLog','cFlowers','cFood','cTiktok','heartTime','ideasGrid','foodCal','foodProtein',
-   'foodProgress','waterStatus','waterFill','waterLast','foodTip','sleepHours','sleepBedtime','sleepWakeup',
-   'sleepQuality','sleepTip','inventoryGrid','achList','radarWrap','heatmapGrid','heatmapPct','leaderboard',
-   'progressWeight','progressWaist','progressHips','analyticsGrid','analyticsTip','rankBadge','levelBadge',
-   'streakBadge','toast','toastTitle','toastBody','soundSwitch','storageNote','bootTime','boot'
-  ].forEach(id=>{ $[id]=document.getElementById(id); });
-}
-
-/* ============================================================
-   AUDIO
-============================================================ */
-let audioCtx=null;
-function initAudio(){ if(!audioCtx){ try{ audioCtx=new (window.AudioContext||window.webkitAudioContext)(); }catch(_){} } }
-function tone(freq,dur,type='sine',vol=.06){
-  if(!state.settings.sound) return;
-  try{
-    initAudio();
-    const osc=audioCtx.createOscillator(), gain=audioCtx.createGain();
-    osc.type=type; osc.frequency.value=freq;
-    gain.gain.setValueAtTime(vol,audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+dur);
-    osc.connect(gain); gain.connect(audioCtx.destination);
-    osc.start(); osc.stop(audioCtx.currentTime+dur);
-  }catch(_){}
-}
-const sound = {
-  xp:()=>{tone(800,.06); setTimeout(()=>tone(1000,.05),70);},
-  levelUp:()=>{tone(600,.08,'square',.04); setTimeout(()=>tone(800,.08,'square',.04),90); setTimeout(()=>tone(1000,.12,'square',.06),180);},
-  rankUp:()=>{tone(400,.12,'sawtooth',.03); setTimeout(()=>tone(600,.12,'sawtooth',.04),130); setTimeout(()=>tone(800,.18,'sawtooth',.06),260); setTimeout(()=>tone(1000,.25,'sine',.08),400);},
-  water:()=>{tone(1200,.04); setTimeout(()=>tone(1400,.04),50);},
-  heart:()=>{tone(500,.1,'sine',.05); setTimeout(()=>tone(600,.1,'sine',.04),120); setTimeout(()=>tone(700,.15,'sine',.03),240);},
-  error:()=>tone(200,.25,'sawtooth',.03)
-};
-
-/* ============================================================
-   TOAST
-============================================================ */
-let toastTimer=null;
-function showToast(title,body,xp=null){
-  $.toastTitle.textContent=title;
-  $.toastBody.innerHTML = body + (xp ? ' <span class="t-xp">+'+xp+' XP</span>' : '');
-  $.toast.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>$.toast.classList.remove('show'),3500);
-}
-
-/* ============================================================
-   SAVE / LOAD (debounced)
-============================================================ */
-let saveTimer=null;
-function queueSave(){ clearTimeout(saveTimer); saveTimer=setTimeout(persist,350); }
-async function persist(){
-  const payload = { state: {...state}, fakeHunters };
-  await Storage.set('fighterData', JSON.stringify(payload));
-}
-async function restore(){
-  const raw = await Storage.get('fighterData');
-  if(!raw) return false;
-  try{
-    const data = JSON.parse(raw);
-    if(data.state) deepMerge(state, data.state);
-    if(Array.isArray(data.fakeHunters)) fakeHunters = data.fakeHunters;
-    return true;
-  }catch(_){ return false; }
-}
-function deepMerge(target, src){
-  for(const k in src){
-    if(src[k] && typeof src[k]==='object' && !Array.isArray(src[k]) && target[k] && typeof target[k]==='object'){
-      deepMerge(target[k], src[k]);
-    } else {
-      target[k]=src[k];
-    }
-  }
-}
-
-/* ============================================================
-   RENDER SCHEDULER — батчит несколько изменений в один кадр
-============================================================ */
-let renderQueued=false;
-function scheduleRender(){
-  if(renderQueued) return;
-  renderQueued=true;
-  requestAnimationFrame(()=>{ renderQueued=false; renderAll(); });
-}
-
-/* ============================================================
-   CORE PROGRESSION
-============================================================ */
-function xpForLevel(){ return CONFIG.BASE_XP + (state.level-1)*20; }
-
-function addXP(amount, label){
-  state.xp += amount;
-  state.totalXP += amount;
-  sound.xp();
-  showToast(label ? '⚡ '+label : '⚡ Опыт получен', label ? 'Опыт получен.' : 'Продолжай в том же духе.', amount);
-  checkLevelUp();
-  checkRankUp();
-  checkAchievements();
-  queueSave();
-  scheduleRender();
-}
-
-function checkLevelUp(){
-  let needed = xpForLevel();
-  while(state.xp >= needed){
-    state.xp -= needed;
-    state.level++;
-    sound.levelUp();
-    showToast('⬆ УРОВЕНЬ ПОВЫШЕН!', 'Ты достиг LV. '+state.level+'! Статы усилены.');
-    for(const k in state.stats) state.stats[k] = Math.floor(state.stats[k]*1.05)+1;
-    needed = xpForLevel();
-  }
-}
-
-function checkRankUp(){
-  const next = CONFIG.RANKS[state.rankIdx+1];
-  if(next && state.totalXP >= next.totalXP){
-    state.rankIdx++;
-    sound.rankUp();
-    showToast('🏆 РАНГ ПОВЫШЕН!', 'Поздравляю! Новый ранг: '+next.label+'!');
-    grantArtifact('⚔️ Клинок '+next.label, 'Ранг '+next.label, '+5 ко всем статам');
-    for(const k in state.stats) state.stats[k]+=5;
-  }
-}
-
-function grantArtifact(name, desc, effect){
-  state.artifacts.push({name, desc, effect});
-  showToast('🎁 АРТЕФАКТ ПОЛУЧЕН!', name+': '+effect);
-}
-
-function checkAchievements(){
-  CONFIG.ACHIEVEMENTS.forEach(a=>{
-    if(state.unlockedAchievements.includes(a.id)) return;
-    if(a.get(state) >= a.target){
-      state.unlockedAchievements.push(a.id);
-      if(a.reward.all){ for(const k in state.stats) state.stats[k]+=a.reward.all; }
-      else if(a.reward.stat){ state.stats[a.reward.stat]=(state.stats[a.reward.stat]||0)+a.reward.val; }
-      grantArtifact(a.icon+' '+a.name, a.desc, 'Достижение разблокировано');
-    }
-  });
-}
-
-/* ============================================================
-   DAY ROLLOVER (streak logic, fixed)
-============================================================ */
-function todayStr(){ return new Date().toISOString().split('T')[0]; }
-function yesterdayStr(){ const d=new Date(); d.setDate(d.getDate()-1); return d.toISOString().split('T')[0]; }
-
-function rolloverIfNeeded(){
-  const today = todayStr();
-  if(state.lastActiveDate === today) return;
-  if(state.lastActiveDate && state.lastActiveDate !== yesterdayStr()){
-    state.streak = 0; // пропущен день — стрик сгорает
-  }
-  state.quests = CONFIG.QUESTS.map(()=>false);
-  state.water = 0;
-  state.food = {cal:0, protein:0};
-  state.lastActiveDate = today;
-}
-
-function recordHistory(){
-  const total = CONFIG.QUESTS.length;
-  const done = state.quests.filter(Boolean).length;
-  state.history[todayStr()] = total ? done/total : 0;
-  // держим только последние 90 дней
-  const keys = Object.keys(state.history).sort();
-  while(keys.length>90){ delete state.history[keys.shift()]; }
-}
-
-/* ============================================================
-   QUESTS
-============================================================ */
-function completeQuest(index){
-  if(state.quests[index]) return;
-  state.quests[index]=true;
-  const q = CONFIG.QUESTS[index];
-  if(q.stat) state.stats[q.stat] = (state.stats[q.stat]||0)+q.val;
-  recordHistory();
-  addXP(q.xp, 'Квест "'+q.label+'" выполнен!');
-
-  const allDone = state.quests.every(Boolean);
-  if(allDone){
-    showToast('🎉 ВСЕ КВЕСТЫ ВЫПОЛНЕНЫ!', 'Ежедневные задания завершены. +30 бонусных XP.');
-    state.daysCompleted++;
-    state.totalDays++;
-    if(state.streakAwardedDate !== todayStr()){
-      state.streak++;
-      state.streakAwardedDate = todayStr();
-    }
-    updateFakeHunters();
-    addXP(30, 'Бонус за день');
-  }
-}
-
-function addCustomQuest(){
-  const label = prompt('Название разового квеста:');
-  if(!label) return;
-  let xp = parseInt(prompt('Сколько XP он стоит?', '10'), 10);
-  if(!Number.isFinite(xp) || xp<=0) xp=10;
-  state.customQuests.push({id:'c'+Date.now(), label, xp});
-  showToast('📌 Квест добавлен', label);
-  queueSave();
-  scheduleRender();
-}
-function completeCustomQuest(idx){
-  const q = state.customQuests[idx];
-  if(!q) return;
-  state.customQuests.splice(idx,1);
-  addXP(q.xp, 'Разовый квест "'+q.label+'" выполнен!');
-}
-function removeCustomQuest(idx){
-  state.customQuests.splice(idx,1);
-  queueSave();
-  scheduleRender();
-}
-
-/* ============================================================
-   WATER / FOOD
-============================================================ */
-function addWater(amount){
-  if(amount==='reset'){
-    state.water=0; state.waterLast=null;
-    showToast('💧 Вода сброшена','Начни заново.');
-    sound.error();
-  } else {
-    state.water += amount;
-    state.waterLast = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-    sound.water();
-    if(state.water >= CONFIG.WATER_GOAL && !state.quests[5]){
-      completeQuest(5);
-    } else if(state.water >= CONFIG.WATER_GOAL){
-      showToast('💧 Норма воды выполнена','Отличная работа.');
-    }
-  }
-  queueSave();
-  scheduleRender();
-}
-function addFood(cal, protein){
-  state.food.cal += cal;
-  state.food.protein += protein;
-  if(state.food.protein >= CONFIG.PROTEIN_GOAL && state.food.protein-protein < CONFIG.PROTEIN_GOAL){
-    addXP(15,'Норма белка выполнена');
-  }
-  if(state.food.cal >= CONFIG.CAL_GOAL && state.food.cal-cal < CONFIG.CAL_GOAL){
-    addXP(10,'Норма калорий выполнена');
-  }
-  queueSave();
-  scheduleRender();
-}
-
-/* ============================================================
-   TRAINING / CODE
-============================================================ */
-function pushLog(arrKey, text){
-  const time = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-  state[arrKey].log = state[arrKey].log || [];
-  state[arrKey].log.unshift({time, text});
-  if(state[arrKey].log.length>50) state[arrKey].log.pop();
-}
-function trainStrike(){
-  state.training.power=Math.min(100,state.training.power+3);
-  state.training.endurance=Math.min(100,state.training.endurance+2);
-  pushLog('training','🥊 Удары: +3 силы, +2 выносливости');
-  addXP(5,'Тренировка ударов');
-}
-function trainStretch(){
-  state.training.flex=Math.min(100,state.training.flex+4);
-  pushLog('training','🧘 Растяжка: +4 гибкости');
-  addXP(10,'Растяжка');
-}
-function trainTech(){
-  state.training.tech=Math.min(100,state.training.tech+3);
-  state.training.power=Math.min(100,state.training.power+1);
-  pushLog('training','📖 Техника: +3 техники, +1 силы');
-  addXP(8,'Техника');
-}
-function studyCode(){
-  state.code.hours += 0.5;
-  const today = todayStr();
-  if(state.code.lastStudyDate !== today){
-    state.code.streak++;
-    state.code.lastStudyDate = today;
-  }
-  pushLog('code','📚 Учёба: +0.5 часа');
-  addXP(15,'Учёба');
-}
-function topicDone(){
-  const available = CONFIG.TOPICS.filter(t=>!state.code.topics.includes(t));
-  if(available.length===0){
-    showToast('📚 Все темы изучены!','Ты великий мастер знаний.');
-    return;
-  }
-  const topic = available[Math.floor(Math.random()*available.length)];
-  state.code.topics.push(topic);
-  pushLog('code','✅ Тема изучена: '+topic);
-  addXP(20,'Тема "'+topic+'" изучена');
-}
-
-/* ============================================================
-   HEART
-============================================================ */
-function addHeartTime(){
-  state.heart.time += 30;
-  sound.heart();
-  showToast('❤️ Время вместе','30 минут с любимым человеком.', 10);
-  addXP(10,'Время вместе');
-}
-function toggleIdea(i){
-  if(state.heart.ideasDone.includes(i)) return;
-  state.heart.ideasDone.push(i);
-  showToast('💡 Идея выполнена!','Ты сделал что-то приятное.',5);
-  addXP(5,'Идея выполнена');
-}
-function randomIdea(){
-  const idea = CONFIG.DATE_IDEAS[Math.floor(Math.random()*CONFIG.DATE_IDEAS.length)];
-  showToast('💡 Идея для свидания', idea);
-  sound.heart();
-}
-
-/* ============================================================
-   SLEEP
-============================================================ */
-function toMinutes(hhmm){ const [h,m]=hhmm.split(':').map(Number); return h*60+m; }
-function startSleep(){
-  state.sleep.bedtime = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-  state.sleep.wakeup = null;
-  showToast('🌙 Спокойной ночи','Система переходит в режим восстановления.');
-  queueSave(); scheduleRender();
-}
-function wakeUp(){
-  if(!state.sleep.bedtime){
-    showToast('⚠️ Ошибка','Ты ещё не ложился спать.');
-    sound.error();
-    return;
-  }
-  state.sleep.wakeup = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-  let mins = toMinutes(state.sleep.wakeup) - toMinutes(state.sleep.bedtime);
-  if(mins<0) mins += 24*60;
-  state.sleep.hours = Math.round((mins/60)*10)/10;
-  state.sleep.quality = Math.min(100, Math.round((state.sleep.hours/8)*100));
-  if(state.sleep.quality>=90) addXP(20,'Отличный сон ('+state.sleep.hours+' ч.)');
-  else if(state.sleep.quality>=70) addXP(10,'Хороший сон ('+state.sleep.hours+' ч.)');
-  else showToast('🌅 Пробуждение', state.sleep.hours+' ч. Не хватает сна.');
-  if(state.sleep.hours>=7.5 && !state.quests[6]) completeQuest(6);
-  queueSave(); scheduleRender();
-}
-
-/* ============================================================
-   PROGRESS MEASUREMENTS
-============================================================ */
-function updateMeasurements(){
-  const w = prompt('Текущий вес (кг):', state.progress.weight);
-  const wa = prompt('Обхват талии (см):', state.progress.waist);
-  const h = prompt('Обхват бёдер (см):', state.progress.hips);
-  if(w) state.progress.weight = parseFloat(w) || state.progress.weight;
-  if(wa) state.progress.waist = parseFloat(wa) || state.progress.waist;
-  if(h) state.progress.hips = parseFloat(h) || state.progress.hips;
-  showToast('📸 Прогресс обновлён','Замеры сохранены.');
-  queueSave(); scheduleRender();
-}
-
-/* ============================================================
-   FAKE LEADERBOARD RIVALS
-============================================================ */
-function seedFakeHunters(){
-  return CONFIG.FAKE_HUNTERS.map((name,i)=>({
-    name, level: Math.max(1, Math.floor(Math.random()*(state.level+2))-1),
-    rankIdx: Math.min(CONFIG.RANKS.length-1, Math.floor((i+1)/2)),
-    xp: (i+1)*60 + Math.floor(Math.random()*30)
-  }));
-}
-function updateFakeHunters(){
-  fakeHunters.forEach(h=>{
-    if(Math.random()<.3){
-      h.level += 0.2;
-      h.xp += 5+Math.floor(Math.random()*15);
-      h.rankIdx = Math.min(CONFIG.RANKS.length-1, Math.floor(h.level/3));
-    }
-  });
-  fakeHunters.sort((a,b)=>b.level-a.level);
-  if(fakeHunters.length>7) fakeHunters.length=7;
-}
-
-/* ============================================================
-   RADAR CHART (SVG, генерируется из статов)
-============================================================ */
-function buildRadar(){
-  const keys = Object.keys(CONFIG.STAT_META);
-  const n = keys.length;
-  const size = 240, cx = size/2, cy = size/2, R = 88;
-  const max = Math.max(40, ...keys.map(k=>state.stats[k]||0)) * 1.15;
-  const pt = (i, r) => {
-    const ang = -Math.PI/2 + i*(2*Math.PI/n);
-    return [cx + r*Math.cos(ang), cy + r*Math.sin(ang)];
-  };
-  let rings = '';
-  [0.25,0.5,0.75,1].forEach(f=>{
-    const pts = keys.map((_,i)=>pt(i,R*f).join(',')).join(' ');
-    rings += '<polygon points="'+pts+'" fill="none" stroke="rgba(0,229,255,0.08)" stroke-width="1"/>';
-  });
-  let spokes = '';
-  let labels = '';
-  keys.forEach((k,i)=>{
-    const [x,y] = pt(i,R);
-    spokes += '<line x1="'+cx+'" y1="'+cy+'" x2="'+x+'" y2="'+y+'" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>';
-    const [lx,ly] = pt(i,R+20);
-    labels += '<text x="'+lx+'" y="'+ly+'" fill="#7291b3" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle" dominant-baseline="middle">'+CONFIG.STAT_META[k].icon+' '+CONFIG.STAT_META[k].short+'</text>';
-  });
-  const dataPts = keys.map((k,i)=>pt(i, R*Math.min(1,(state.stats[k]||0)/max)).join(',')).join(' ');
-  return '<svg viewBox="0 0 '+size+' '+size+'" width="'+size+'" height="'+size+'">'
-    + rings + spokes
-    + '<polygon points="'+dataPts+'" fill="rgba(0,229,255,0.16)" stroke="#00e5ff" stroke-width="2" stroke-linejoin="round" style="filter:drop-shadow(0 0 6px rgba(0,229,255,.5));"/>'
-    + labels
-    + '</svg>';
-}
-
-/* ============================================================
-   RENDER
-============================================================ */
-function renderAll(){
-  renderHeader();
-  renderStats();
-  renderQuests();
-  renderTraining();
-  renderCode();
-  renderHeart();
-  renderFood();
-  renderSleep();
-  renderInventoryAndAchievements();
-  renderProfile();
-  renderLeaderboard();
-  renderProgress();
-  renderAnalytics();
-  renderSettings();
-}
-
-function renderHeader(){
-  const rank = CONFIG.RANKS[state.rankIdx];
-  $.rankBadge.textContent = rank.label;
-  $.levelBadge.textContent = 'LV. '+state.level;
-  $.streakBadge.textContent = '🔥 '+state.streak+' дн.';
-}
-
-function renderStats(){
-  const needed = xpForLevel();
-  const pct = Math.min(100, (state.xp/needed)*100);
-  const colorClass = {will:'',atk:'cyan',def:'',agi:'cyan',int:'purple',end:'',cha:'gold',mana:''};
-  let html = '';
-  Object.keys(CONFIG.STAT_META).forEach(k=>{
-    const m = CONFIG.STAT_META[k];
-    html += '<div class="stat"><span class="label">'+m.icon+' '+m.label+'</span><span class="value '+(colorClass[k]||'')+'">'+(state.stats[k]||0)+'</span></div>';
-  });
-  html += '<div class="xp-bar"><div class="track"><div class="fill" style="width:'+pct+'%"></div></div>'
-        + '<div class="info"><span>'+Math.floor(state.xp)+'</span><span>'+needed+'</span></div></div>';
-  $.statsGrid.innerHTML = html;
-}
-
-function renderQuests(){
-  let html = CONFIG.QUESTS.map((q,i)=>{
-    const done = state.quests[i];
-    return '<div class="quest'+(done?' done':'')+'" data-quest="'+i+'">'
-      + '<div class="check">✓</div>'
-      + '<div class="info"><div class="q-title">'+q.label+'</div><div class="q-desc">'+q.desc+'</div></div>'
-      + '<div class="q-xp">+'+q.xp+' XP</div>'
-      + '</div>';
-  }).join('');
-  html += state.customQuests.map((q,i)=>
-    '<div class="quest custom" data-custom="'+i+'">'
-    + '<div class="check">✓</div>'
-    + '<div class="info"><div class="q-title">'+q.label+'</div><div class="q-desc">Разовый квест</div></div>'
-    + '<div class="q-xp">+'+q.xp+' XP</div>'
-    + '<div class="q-remove" data-remove="'+i+'">✕</div>'
-    + '</div>'
-  ).join('');
-  $.questList.innerHTML = html;
-  const done = state.quests.filter(Boolean).length;
-  $.questProgress.textContent = done+' / '+CONFIG.QUESTS.length;
-}
-
-function renderTraining(){
-  const t = state.training;
-  const bars = [['power','cyan','⚡ Сила'],['flex','gold','🧘 Гибкость'],['tech','pink','📖 Техника'],['endurance','purple','🔥 Выносливость']];
-  $.trainStats.innerHTML = bars.map(([k,c,label])=>
-    '<div class="train-card"><div class="label">'+label+'</div><div class="value '+c+'">'+t[k]+'</div>'
-    + '<div class="bar"><div class="fill '+c+'" style="width:'+t[k]+'%"></div></div></div>'
-  ).join('');
-  $.trainLog.innerHTML = t.log && t.log.length
-    ? t.log.slice(0,10).map(e=>'<div class="entry"><span class="time">'+e.time+'</span>'+e.text+'</div>').join('')
-    : '<div class="entry"><span class="time">⚔️</span>Начни тренировку, Охотник.</div>';
-}
-
-function renderCode(){
-  $.codeHours.textContent = state.code.hours.toFixed(1);
-  $.codeTopics.textContent = state.code.topics.length;
-  $.codeStreak.textContent = state.code.streak;
-  $.codeTopicsList.innerHTML = CONFIG.TOPICS.map(t=>
-    '<span class="topic-tag'+(state.code.topics.includes(t)?' done':'')+'">'+t+'</span>'
-  ).join('');
-  $.codeLog.innerHTML = state.code.log && state.code.log.length
-    ? state.code.log.slice(0,10).map(e=>'<div class="entry"><span class="time">'+e.time+'</span>'+e.text+'</div>').join('')
-    : '<div class="entry"><span class="time">💻</span>Начни изучение, Охотник.</div>';
-}
-
-function renderHeart(){
-  $.cFlowers.textContent = state.companion.flowers;
-  $.cFood.textContent = state.companion.food;
-  $.cTiktok.textContent = state.companion.tiktok;
-  $.heartTime.textContent = state.heart.time;
-  $.ideasGrid.innerHTML = CONFIG.DATE_IDEAS.map((idea,i)=>
-    '<div class="idea-item'+(state.heart.ideasDone.includes(i)?' done':'')+'" data-idea="'+i+'"><span>'+idea+'</span><span>✨</span></div>'
-  ).join('');
-}
-
-function renderFood(){
-  $.foodCal.textContent = state.food.cal;
-  $.foodProtein.textContent = state.food.protein;
-  const calPct = Math.min(100,(state.food.cal/CONFIG.CAL_GOAL)*100);
-  $.foodProgress.textContent = Math.floor(calPct)+'%';
-  const waterPct = Math.min(100,(state.water/CONFIG.WATER_GOAL)*100);
-  $.waterStatus.textContent = Math.floor(state.water)+' / '+CONFIG.WATER_GOAL+' мл';
-  $.waterFill.style.width = waterPct+'%';
-  $.waterLast.textContent = state.waterLast || '—';
-
-  let tip = '🍽️ Добавь продукты, чтобы получить совет';
-  if(state.food.protein < CONFIG.PROTEIN_GOAL*0.6) tip = '⚠️ Мало белка! Съешь курицу, творог или яйца.';
-  else if(state.food.protein < CONFIG.PROTEIN_GOAL) tip = '💪 Хороший темп! Добавь ещё белка до нормы.';
-  else if(state.food.cal < CONFIG.CAL_GOAL*0.7) tip = '🍚 Нужно больше калорий! Добавь сложные углеводы.';
-  else if(state.food.cal >= CONFIG.CAL_GOAL) tip = '🔥 Отлично! Норма по калориям и белку выполнена.';
-  $.foodTip.textContent = tip;
-}
-
-function renderSleep(){
-  $.sleepHours.textContent = state.sleep.hours || '0';
-  $.sleepBedtime.textContent = state.sleep.bedtime || '—';
-  $.sleepWakeup.textContent = state.sleep.wakeup || '—';
-  $.sleepQuality.textContent = state.sleep.quality+'%';
-  let tip = 'Ложись спать до 23:00 для максимального восстановления.';
-  if(state.sleep.quality>=90) tip='🌟 Отличный сон! Полное восстановление.';
-  else if(state.sleep.quality>=70) tip='💤 Хороший сон. Продолжай в том же духе.';
-  else if(state.sleep.quality>0) tip='😴 Постарайся спать больше 7.5 часов.';
-  $.sleepTip.textContent = tip;
-}
-
-function renderInventoryAndAchievements(){
-  $.inventoryGrid.innerHTML = state.artifacts.length
-    ? state.artifacts.map(a=>{
-        const icon = a.name.split(' ')[0] || '🎁';
-        return '<div class="artifact"><span class="icon">'+icon+'</span><div class="name">'+a.name+'</div><div class="effect">'+a.effect+'</div></div>';
-      }).join('')
-    : '<div class="artifact locked"><span class="icon">❓</span><div class="name">Скрыто</div><div class="effect">Продолжай качаться</div></div>';
-
-  $.achList.innerHTML = CONFIG.ACHIEVEMENTS.map(a=>{
-    const unlocked = state.unlockedAchievements.includes(a.id);
-    const val = Math.min(a.target, a.get(state));
-    const pct = Math.round((val/a.target)*100);
-    return '<div class="ach-row'+(unlocked?'':' locked')+'">'
-      + '<div class="a-icon">'+(unlocked?a.icon:'🔒')+'</div>'
-      + '<div class="a-info"><div class="a-name">'+a.name+'</div><div class="a-desc">'+a.desc+(unlocked?'':' — '+val+'/'+a.target)+'</div>'
-      + (unlocked ? '' : '<div class="a-bar"><i style="width:'+pct+'%"></i></div>')
-      + '</div></div>';
-  }).join('');
-}
-
-function renderProfile(){
-  $.radarWrap.innerHTML = buildRadar();
-
-  // heatmap: последние 28 дней
-  const days = [];
-  for(let i=27;i>=0;i--){
-    const d = new Date(); d.setDate(d.getDate()-i);
-    days.push(d.toISOString().split('T')[0]);
-  }
-  let activeDays = 0;
-  $.heatmapGrid.innerHTML = days.map(d=>{
-    const frac = state.history[d] || 0;
-    if(frac>0) activeDays++;
-    let lvl = 0;
-    if(frac>=1) lvl=4; else if(frac>=0.66) lvl=3; else if(frac>=0.33) lvl=2; else if(frac>0) lvl=1;
-    return '<div class="hcell" data-lvl="'+lvl+'" title="'+d+'"></div>';
-  }).join('');
-  $.heatmapPct.textContent = Math.round((activeDays/28)*100)+'%';
-}
-
-function renderLeaderboard(){
-  const rank = CONFIG.RANKS[state.rankIdx];
-  const all = [...fakeHunters, {name:'Ты', level:state.level, rankIdx:state.rankIdx, xp:state.xp, isMe:true}];
-  all.sort((a,b)=> b.level!==a.level ? b.level-a.level : b.xp-a.xp);
-  $.leaderboard.innerHTML = all.slice(0,8).map((h,idx)=>{
-    const label = h.isMe ? rank.label : (CONFIG.RANKS[h.rankIdx]||CONFIG.RANKS[0]).label;
-    const medal = idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':'【'+(idx+1)+'】';
-    return '<div class="leader-row'+(h.isMe?' me':'')+'"><span>'+medal+'</span>'
-      + '<span class="name">'+(h.isMe?'⭐ ':'')+h.name+'</span>'
-      + '<span class="rank">'+label+'</span><span class="lvl">LV.'+Math.floor(h.level)+'</span></div>';
-  }).join('');
-}
-
-function renderProgress(){
-  $.progressWeight.textContent = state.progress.weight+' кг';
-  $.progressWaist.textContent = state.progress.waist+' см';
-  $.progressHips.textContent = state.progress.hips+' см';
-}
-
-function renderAnalytics(){
-  const questDone = state.quests.filter(Boolean).length;
-  const prod = Math.round((questDone/CONFIG.QUESTS.length)*100);
-  const t = state.training;
-  const trainAvg = Math.round((t.power+t.flex+t.tech+t.endurance)/4);
-  const study = Math.min(100, Math.round((state.code.topics.length/CONFIG.TOPICS.length)*100));
-  const heart = Math.min(100, Math.round((state.heart.time/120)*100));
-  const cards = [
-    ['🏆 Продуктивность',prod,'cyan'],
-    ['🥊 Тренировки',trainAvg,'gold'],
-    ['💻 Учёба',study,'purple'],
-    ['❤️ Отношения',heart,'pink']
-  ];
-  $.analyticsGrid.innerHTML = cards.map(([label,val,c])=>
-    '<div class="analytics-card"><div class="label">'+label+'</div><div class="value '+c+'">'+val+'%</div>'
-    + '<div class="mini-bar"><div class="fill '+c+'" style="width:'+val+'%;background:currentColor;color:var(--'+c+')"></div></div></div>'
-  ).join('');
-  $.analyticsTip.textContent = 'Квестов выполнено: '+questDone+'/'+CONFIG.QUESTS.length+' · Стрик: '+state.streak+' дн. · Всего дней завершено: '+state.daysCompleted;
-}
-
-function renderSettings(){
-  $.soundSwitch.classList.toggle('on', state.settings.sound);
-  $.storageNote.textContent = Storage.available
-    ? '💾 Прогресс сохраняется автоматически.'
-    : '⚠️ Хранилище недоступно в этом окружении — прогресс будет потерян при перезагрузке страницы. Экспортируй резервную копию, чтобы не потерять данные.';
-}
-
-/* ============================================================
-   EXPORT / IMPORT
-============================================================ */
-function exportData(){
-  const payload = JSON.stringify({state, fakeHunters}, null, 2);
-  const blob = new Blob([payload], {type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'fuel-fighter-backup-'+todayStr()+'.json';
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
-  showToast('⬇️ Экспортировано','Резервная копия скачана.');
-}
-function importData(file){
-  const reader = new FileReader();
-  reader.onload = () => {
-    try{
-      const data = JSON.parse(reader.result);
-      if(data.state) deepMerge(state, data.state);
-      if(Array.isArray(data.fakeHunters)) fakeHunters = data.fakeHunters;
-      showToast('⬆️ Импортировано','Прогресс восстановлен из файла.');
-      queueSave();
-      scheduleRender();
-    }catch(_){
-      showToast('⚠️ Ошибка импорта','Файл повреждён или имеет неверный формат.');
-      sound.error();
-    }
-  };
-  reader.readAsText(file);
-}
-
-/* ============================================================
-   RESET
-============================================================ */
-async function resetGame(){
-  if(!confirm('🗡️ Перерождение сбросит весь прогресс безвозвратно. Продолжить?')) return;
-  await Storage.set('fighterData', '');
-  location.reload();
-}
-
-/* ============================================================
-   EVENT WIRING (делегирование — один слушатель на контейнер)
-============================================================ */
-function wireEvents(){
-  document.getElementById('tabs').addEventListener('click', e=>{
-    const btn = e.target.closest('.tab');
-    if(!btn) return;
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-    document.querySelectorAll('.content').forEach(c=>c.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById(btn.dataset.tab).classList.add('active');
-  });
-
-  $.questList.addEventListener('click', e=>{
-    initAudio();
-    const rm = e.target.closest('[data-remove]');
-    if(rm){ removeCustomQuest(parseInt(rm.dataset.remove,10)); return; }
-    const q = e.target.closest('[data-quest]');
-    if(q){ completeQuest(parseInt(q.dataset.quest,10)); return; }
-    const c = e.target.closest('[data-custom]');
-    if(c){ completeCustomQuest(parseInt(c.dataset.custom,10)); }
-  });
-  document.getElementById('addQuestBtn').addEventListener('click', addCustomQuest);
-
-  document.querySelectorAll('[data-water]').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const v = btn.dataset.water;
-      addWater(v==='reset' ? 'reset' : parseInt(v,10));
-    });
-  });
-  document.getElementById('foodAdd100').addEventListener('click', ()=>addFood(100,5));
-  document.getElementById('foodAddProtein').addEventListener('click', ()=>addFood(150,30));
-
-  document.getElementById('trainStrike').addEventListener('click', trainStrike);
-  document.getElementById('trainStretch').addEventListener('click', trainStretch);
-  document.getElementById('trainTechBtn').addEventListener('click', trainTech);
-
-  document.getElementById('codeStudy').addEventListener('click', studyCode);
-  document.getElementById('codeTopicDone').addEventListener('click', topicDone);
-
-  document.getElementById('heartAddTime').addEventListener('click', addHeartTime);
-  document.getElementById('heartIdea').addEventListener('click', randomIdea);
-  $.ideasGrid.addEventListener('click', e=>{
-    const item = e.target.closest('[data-idea]');
-    if(item) toggleIdea(parseInt(item.dataset.idea,10));
-  });
-
-  document.getElementById('sleepStart').addEventListener('click', startSleep);
-  document.getElementById('sleepWake').addEventListener('click', wakeUp);
-
-  document.getElementById('progressUpdate').addEventListener('click', updateMeasurements);
-
-  $.soundSwitch.addEventListener('click', ()=>{
-    state.settings.sound = !state.settings.sound;
-    queueSave(); scheduleRender();
-    if(state.settings.sound) tone(900,.05);
-  });
-  document.getElementById('editCompanionRow').addEventListener('click', ()=>{
-    const f = prompt('Любимые цветы:', state.companion.flowers);
-    const fo = prompt('Еда:', state.companion.food);
-    const tt = prompt('ТикТок:', state.companion.tiktok);
-    if(f!==null) state.companion.flowers=f;
-    if(fo!==null) state.companion.food=fo;
-    if(tt!==null) state.companion.tiktok=tt;
-    queueSave(); scheduleRender();
-  });
-  document.getElementById('exportRow').addEventListener('click', exportData);
-  document.getElementById('importRow').addEventListener('click', ()=>document.getElementById('importFile').click());
-  document.getElementById('importFile').addEventListener('change', e=>{
-    if(e.target.files[0]) importData(e.target.files[0]);
-    e.target.value='';
-  });
-
-  document.getElementById('resetBtn').addEventListener('click', resetGame);
-
-  document.addEventListener('touchstart', initAudio, {once:true});
-  document.addEventListener('click', initAudio, {once:true});
-}
-
-/* ============================================================
-   BOOT
-============================================================ */
-async function init(){
-  cacheDom();
-  const bootStart = Date.now();
-  const loaded = await restore();
-
-  rolloverIfNeeded();
-  if(!fakeHunters.length) fakeHunters = seedFakeHunters();
-
-  if(!loaded){
-    grantArtifact('🗡️ Кинжал Новичка', 'Стартовый артефакт', '+2 к Атаке');
-    state.stats.atk += 2;
-  }
-
-  wireEvents();
-  renderAll();
-  showToast(loaded ? '🗡️ СИСТЕМА ЗАГРУЖЕНА' : '🗡️ ПРОБУЖДЕНИЕ',
-             loaded ? 'Продолжай свой путь, Охотник.' : 'Добро пожаловать. Система активирована.');
-
-  $.bootTime.textContent = new Date().toLocaleDateString('ru-RU');
-  queueSave();
-
-  const elapsed = Date.now()-bootStart;
-  setTimeout(()=>$.boot.classList.add('hide'), Math.max(400-elapsed,0));
-
-  setTimeout(()=>{
-    if(state.level===1 && state.xp===0 && state.totalXP===0){
-      showToast('💡 СОВЕТ СИСТЕМЫ','Начни с выполнения квестов — они принесут первый опыт.');
-    }
-  }, 2600);
-}
-
-document.addEventListener('DOMContentLoaded', init);
-})();
-</script>
+
+    <div class="app">
+        <div class="glass">
+            <!-- ШАПКА -->
+            <div class="header">
+                <h1>⚔️ FUEL FIGHTER<small>▸ Система активирована</small></h1>
+                <div class="badges">
+                    <span class="badge gold" id="rankBadge">E-RANK</span>
+                    <span class="badge cyan" id="levelBadge">LV. 1</span>
+                    <span class="badge" id="streakBadge">🔥 0 дн.</span>
+                </div>
+            </div>
+
+            <!-- СТАТЫ -->
+            <div class="stats" id="statsGrid"></div>
+
+            <!-- ВКЛАДКИ С SVG -->
+            <div class="tabs" id="tabs">
+                <button class="tab active" data-tab="tab-quests">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M12 8v4l3 3" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>
+                    Квесты
+                </button>
+                <button class="tab" data-tab="tab-train">
+                    <svg viewBox="0 0 24 24"><path d="M6 15l-2 2v3h3l2-2M14 4l3-3 3 3-3 3M4 14l3-3 3 3-3 3z" stroke="currentColor" stroke-width="1.8" fill="none"/><circle cx="12" cy="12" r="2" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>
+                    Тренир.
+                </button>
+                <button class="tab" data-tab="tab-code">
+                    <svg viewBox="0 0 24 24"><path d="M8 6l-6 6 6 6M16 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M13 4l-2 16" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>
+                    ИБ&Код
+                </button>
+                <button class="tab" data-tab="tab-heart">
+                    <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>
+                    Близкие
+                </button>
+                <button class="tab" data-tab="tab-food">
+                    <svg viewBox="0 0 24 24"><path d="M12 2v4M12 6c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2s2-.9 2-2V8c0-1.1-.9-2-2-2z" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M18 6v2c0 1.1-.9 2-2 2M6 6v2c0 1.1.9 2 2 2" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>
+                    Топливо
+                </button>
+                <button class="tab" data-tab="tab-sleep">
+                    <svg viewBox="0 0 24 24"><path d="M12 2v4M12 6c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2s2-.9 2-2V8c0-1.1-.9-2-2-2z" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M18 6v2c0 1.1-.9 2-2 2M6 6v2c0 1.1.9 2 2 2" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>
+                    Сон
+                </button>
+                <button class="tab" data-tab="tab-inventory">
+                    <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>
+                    Награды
+                </button>
+                <button class="tab" data-tab="tab-profile">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M12 14c-4 0-7 2-7 5v1h14v-1c0-3-3-5-7-5z" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>
+                    Профиль
+                </button>
+                <button class="tab" data-tab="tab-leaders">
+                    <svg viewBox="0 0 24 24"><path d="M12 2L9 7l-6 .5 4.5 4.5L6 20l6-3 6 3-1.5-8L21 7.5 15 7z" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>
+                    Лидеры
+                </button>
+                <button class="tab" data-tab="tab-progress">
+                    <svg viewBox="0 0 24 24"><path d="M4 20h16M4 12l4-4 4 4 4-4 4 4" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>
+                    Замеры
+                </button>
+                <button class="tab" data-tab="tab-analytics">
+                    <svg viewBox="0 0 24 24"><rect x="4" y="14" width="4" height="6" stroke="currentColor" stroke-width="1.8" fill="none"/><rect x="10" y="8" width="4" height="12" stroke="currentColor" stroke-width="1.8" fill="none"/><rect x="16" y="2" width="4" height="18" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>
+                    Аналит.
+                </button>
+                <button class="tab" data-tab="tab-settings">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M12 1v3M12 20v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M1 12h3M20 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>
+                    Настр.
+                </button>
+            </div>
+
+            <!-- КОНТЕНТ ВКЛАДОК (упрощённо, JS генерирует) -->
+            <div class="content active" id="tab-quests">
+                <div class="quest-list" id="questList"></div>
+                <div class="add-quest-row">
+                    <button class="btn ghost wide" id="addQuestBtn">＋ Разовый квест</button>
+                </div>
+                <div class="foot-row"><span id="questProgress">0 / 7</span><span>квестов выполнено сегодня</span></div>
+            </div>
+
+            <div class="content" id="tab-train">
+                <div class="train-stats" id="trainStats"></div>
+                <div class="btn-group">
+                    <button class="btn" id="trainStrike">⚡ Удары (+5 XP)</button>
+                    <button class="btn gold" id="trainStretch">🧘 Растяжка (+10 XP)</button>
+                    <button class="btn pink" id="trainTechBtn">📖 Техника (+8 XP)</button>
+                </div>
+                <div class="log" id="trainLog"></div>
+            </div>
+
+            <div class="content" id="tab-code">
+                <div class="code-stats" id="codeStats"></div>
+                <div class="code-topics" id="codeTopicsList"></div>
+                <div class="btn-group">
+                    <button class="btn" id="codeStudy">📚 Учиться (+15 XP)</button>
+                    <button class="btn gold" id="codeTopicDone">✅ Тема изучена</button>
+                </div>
+                <div class="log" id="codeLog"></div>
+            </div>
+
+            <div class="content" id="tab-heart">
+                <div class="heart-card" id="heartCard"></div>
+                <div class="btn-group">
+                    <button class="btn pink" id="heartAddTime">❤️ +30 мин вместе</button>
+                    <button class="btn gold" id="heartIdea">💡 Случайная идея</button>
+                </div>
+                <div class="ideas-grid" id="ideasGrid"></div>
+            </div>
+
+            <div class="content" id="tab-food">
+                <div class="food-stats" id="foodStats"></div>
+                <div class="water-track" id="waterTrack"></div>
+                <div class="tip" id="foodTip">🍽️ Добавь продукты, чтобы получить совет</div>
+                <div class="btn-group" style="margin-top:8px;">
+                    <button class="btn" id="foodAdd100">➕ +100 ккал</button>
+                    <button class="btn gold" id="foodAddProtein">🥩 +30г белка</button>
+                </div>
+            </div>
+
+            <div class="content" id="tab-sleep">
+                <div class="sleep-track" id="sleepTrack"></div>
+                <div class="btn-group">
+                    <button class="btn" id="sleepStart">🌙 Лечь спать</button>
+                    <button class="btn gold" id="sleepWake">☀️ Проснуться</button>
+                </div>
+                <div class="tip" id="sleepTip">💡 Ложись спать до 23:00 для максимального восстановления</div>
+            </div>
+
+            <div class="content" id="tab-inventory">
+                <h3 class="section-title">Артефакты</h3>
+                <div class="inventory-grid" id="inventoryGrid"></div>
+                <h3 class="section-title">Достижения</h3>
+                <div id="achList"></div>
+            </div>
+
+            <div class="content" id="tab-profile">
+                <div class="radar-wrap" id="radarWrap"></div>
+                <div class="heatmap-wrap" id="heatmapWrap"></div>
+            </div>
+
+            <div class="content" id="tab-leaders">
+                <div class="leaderboard" id="leaderboard"></div>
+            </div>
+
+            <div class="content" id="tab-progress">
+                <div class="progress-grid" id="progressGrid"></div>
+                <button class="btn gold wide" id="progressUpdate">📝 Обновить замеры</button>
+            </div>
+
+            <div class="content" id="tab-analytics">
+                <div class="analytics-grid" id="analyticsGrid"></div>
+                <div class="tip" style="margin-top:10px;" id="analyticsTip">📈 Сводка твоего прогресса</div>
+            </div>
+
+            <div class="content" id="tab-settings">
+                <div id="settingsContent"></div>
+            </div>
+
+            <!-- ФУТЕР -->
+            <div class="footer">
+                <span>🗡️ СИСТЕМА v.3.0</span>
+                <span id="bootTime">—</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ТОСТ -->
+    <div class="toast" id="toast">
+        <div class="t-title" id="toastTitle">СИСТЕМА</div>
+        <div class="t-body" id="toastBody">Добро пожаловать, Охотник.</div>
+    </div>
+
+    <script>
+        // ============================================================
+        // ПОЛНЫЙ JS-ДВИЖОК (ТОТ ЖЕ, ЧТО И РАНЬШЕ, НО С ПОДДЕРЖКОЙ SVG)
+        // ============================================================
+        (function() {
+            'use strict';
+
+            // === КОНФИГ ===
+            const CONFIG = {
+                WATER_GOAL: 2200,
+                CAL_GOAL: 2100,
+                PROTEIN_GOAL: 150,
+                BASE_XP: 100,
+                RANKS: [
+                    { id: 'E', label: 'E-RANK', totalXP: 0 },
+                    { id: 'D', label: 'D-RANK', totalXP: 800 },
+                    { id: 'C', label: 'C-RANK', totalXP: 2200 },
+                    { id: 'B', label: 'B-RANK', totalXP: 5000 },
+                    { id: 'A', label: 'A-RANK', totalXP: 10000 },
+                    { id: 'S', label: 'S-RANK', totalXP: 20000 },
+                    { id: 'SSS', label: 'SSS-RANK', totalXP: 50000 }
+                ],
+                QUESTS: [
+                    { id: 'wake', label: '🌅 Восход', desc: 'Проснуться до 7:00', xp: 10, stat: 'will', val: 1 },
+                    { id: 'exercise', label: '🏃 Зарядка', desc: '10+ мин упражнений', xp: 15, stat: 'agi', val: 1 },
+                    { id: 'code', label: '💻 Код', desc: '30+ мин Python/ИБ', xp: 20, stat: 'int', val: 1 },
+                    { id: 'work', label: '⚔️ Осада', desc: 'Рабочие задачи', xp: 15, stat: 'will', val: 1 },
+                    { id: 'train', label: '🥊 Тренировка', desc: 'Каратэ / растяжка', xp: 25, stat: 'agi', val: 2 },
+                    { id: 'water', label: '💧 Восполнение', desc: 'Выпить 2.2+ л воды', xp: 10, stat: 'end', val: 1 },
+                    { id: 'sleep', label: '🌙 Восстановление', desc: 'Сон 7.5+ ч', xp: 10, stat: 'end', val: 1 }
+                ],
+                TOPICS: ['🐍 Python', '🔐 Криптография', '🌐 Сети', '⚡ Алгоритмы', '🛡️ ИБ'],
+                STAT_META: {
+                    will: { label: 'Воля', short: 'ВОЛ', icon: '❤️' },
+                    atk: { label: 'Атака', short: 'АТК', icon: '🗡️' },
+                    def: { label: 'Защита', short: 'ЗАЩ', icon: '🛡️' },
+                    agi: { label: 'Ловкость', short: 'ЛОВ', icon: '⚡' },
+                    int: { label: 'Интеллект', short: 'ИНТ', icon: '🧠' },
+                    end: { label: 'Выносливость', short: 'ВЫН', icon: '💧' },
+                    cha: { label: 'Харизма', short: 'ХАР', icon: '💛' },
+                    mana: { label: 'Мана', short: 'МАН', icon: '🌀' }
+                },
+                DATE_IDEAS: [
+                    '🌹 Прогулка с белыми розами', '🍽️ Ужин при свечах', '🎬 Кино под одеялом', '🧘 Йога вдвоём',
+                    '🎨 Арт-свидание', '🌅 Закат на крыше', '🧁 Испечь десерт вместе', '🎵 Плейлист друг другу'
+                ],
+                ACHIEVEMENTS: [
+                    { id: 'streak7', icon: '🛡️', name: 'Железная воля', desc: 'Стрик 7 дней подряд', target: 7,
+                        get: s => s.streak, reward: { stat: 'will', val: 10 } },
+                    { id: 'streak30', icon: '🌑', name: 'Тень Монарха', desc: 'Стрик 30 дней подряд', target: 30,
+                        get: s => s.streak, reward: { all: 15 } },
+                    { id: 'level10', icon: '✨', name: 'Пробуждение', desc: 'Достигнут LV. 10', target: 10, get: s => s
+                            .level, reward: { stat: 'mana', val: 10 } },
+                    { id: 'topics5', icon: '📚', name: 'Архимаг Кода', desc: 'Изучены все темы ИБ/кода', target: 5,
+                        get: s => s.code.topics.length, reward: { stat: 'int', val: 8 } },
+                    { id: 'hours20', icon: '💻', name: 'Кибер-Охотник', desc: '20 часов учёбы суммарно', target: 20,
+                        get: s => s.code.hours, reward: { stat: 'int', val: 10 } },
+                    { id: 'heart10', icon: '💞', name: 'Хранитель сердца', desc: '10 идей для свиданий выполнено',
+                        target: 10, get: s => s.heart.ideasDone.length, reward: { stat: 'cha', val: 10 } },
+                    { id: 'days30', icon: '🏛️', name: 'Столп дисциплины', desc: '30 полностью выполненных дней',
+                        target: 30, get: s => s.daysCompleted, reward: { stat: 'end', val: 12 } }
+                ],
+                FAKE_HUNTERS: ['Jester', 'Vex', 'Raven', 'Shadow', 'Lynx', 'Ghost', 'Wraith', 'Phantom']
+            };
+
+            // === STORAGE ===
+            const Storage = {
+                available: (typeof window !== 'undefined' && !!window.storage),
+                mem: {},
+                async get(key) {
+                    if (this.available) {
+                        try { const r = await window.storage.get(key, false); return r ? r.value : null; } catch (_) { return null; }
+                    }
+                    return Object.prototype.hasOwnProperty.call(this.mem, key) ? this.mem[key] : null;
+                },
+                async set(key, value) {
+                    if (this.available) {
+                        try { await window.storage.set(key, value, false); return true; } catch (_) { return false; }
+                    }
+                    this.mem[key] = value;
+                    return true;
+                }
+            };
+
+            // === STATE ===
+            const state = {
+                level: 1,
+                xp: 0,
+                totalXP: 0,
+                rankIdx: 0,
+                stats: { will: 10, atk: 10, def: 5, agi: 15, int: 12, end: 10, cha: 8, mana: 5 },
+                quests: CONFIG.QUESTS.map(() => false),
+                customQuests: [],
+                streak: 0,
+                lastActiveDate: '',
+                streakAwardedDate: '',
+                water: 0,
+                waterLast: null,
+                food: { cal: 0, protein: 0 },
+                artifacts: [],
+                unlockedAchievements: [],
+                totalDays: 0,
+                daysCompleted: 0,
+                training: { power: 0, flex: 0, tech: 0, endurance: 0, log: [] },
+                code: { hours: 0, topics: [], streak: 0, lastStudyDate: '', log: [] },
+                heart: { time: 0, ideasDone: [] },
+                sleep: { hours: 0, bedtime: null, wakeup: null, quality: 0 },
+                progress: { weight: 75, waist: 85, hips: 95 },
+                history: {},
+                settings: { sound: true },
+                companion: { flowers: 'Белые розы', food: 'Ищет себя', tiktok: 'Любит смотреть' }
+            };
+            let fakeHunters = [];
+
+            // === DOM ===
+            const $ = {};
+            function cacheDom() {
+                ['statsGrid', 'questList', 'questProgress', 'trainStats', 'trainLog', 'codeStats', 'codeTopicsList', 'codeLog',
+                    'heartCard', 'ideasGrid', 'foodStats', 'waterTrack', 'foodTip', 'sleepTrack', 'sleepTip',
+                    'inventoryGrid', 'achList', 'radarWrap', 'heatmapWrap', 'leaderboard', 'progressGrid', 'analyticsGrid',
+                    'analyticsTip', 'rankBadge', 'levelBadge', 'streakBadge', 'toast', 'toastTitle', 'toastBody',
+                    'boot', 'bootTime', 'settingsContent'
+                ].forEach(id => { $[id] = document.getElementById(id); });
+            }
+
+            // === AUDIO ===
+            let audioCtx = null;
+
+            function initAudio() { if (!audioCtx) { try { audioCtx = new(window.AudioContext || window.webkitAudioContext)(); } catch (_) {} } }
+
+            function tone(freq, dur, type = 'sine', vol = .06) {
+                if (!state.settings.sound) return;
+                try {
+                    initAudio();
+                    const osc = audioCtx.createOscillator(),
+                        gain = audioCtx.createGain();
+                    osc.type = type;
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(.001, audioCtx.currentTime + dur);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + dur);
+                } catch (_) {}
+            }
+            const sound = {
+                xp: () => { tone(800, .06);
+                    setTimeout(() => tone(1000, .05), 70); },
+                levelUp: () => { tone(600, .08, 'square', .04);
+                    setTimeout(() => tone(800, .08, 'square', .04), 90);
+                    setTimeout(() => tone(1000, .12, 'square', .06), 180); },
+                rankUp: () => { tone(400, .12, 'sawtooth', .03);
+                    setTimeout(() => tone(600, .12, 'sawtooth', .04), 130);
+                    setTimeout(() => tone(800, .18, 'sawtooth', .06), 260);
+                    setTimeout(() => tone(1000, .25, 'sine', .08), 400); },
+                water: () => { tone(1200, .04);
+                    setTimeout(() => tone(1400, .04), 50); },
+                heart: () => { tone(500, .1, 'sine', .05);
+                    setTimeout(() => tone(600, .1, 'sine', .04), 120);
+                    setTimeout(() => tone(700, .15, 'sine', .03), 240); },
+                error: () => tone(200, .25, 'sawtooth', .03)
+            };
+
+            // === TOAST ===
+            let toastTimer = null;
+
+            function showToast(title, body, xp = null) {
+                $.toastTitle.textContent = title;
+                $.toastBody.innerHTML = body + (xp ? ' <span class="t-xp">+' + xp + ' XP</span>' : '');
+                $.toast.classList.add('show');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => $.toast.classList.remove('show'), 3500);
+            }
+
+            // === SAVE ===
+            let saveTimer = null;
+
+            function queueSave() { clearTimeout(saveTimer);
+                saveTimer = setTimeout(persist, 350); }
+
+            async function persist() {
+                const payload = { state: {...state }, fakeHunters };
+                await Storage.set('fighterData', JSON.stringify(payload));
+            }
+
+            async function restore() {
+                const raw = await Storage.get('fighterData');
+                if (!raw) return false;
+                try {
+                    const data = JSON.parse(raw);
+                    if (data.state) deepMerge(state, data.state);
+                    if (Array.isArray(data.fakeHunters)) fakeHunters = data.fakeHunters;
+                    return true;
+                } catch (_) { return false; }
+            }
+
+            function deepMerge(target, src) {
+                for (const k in src) {
+                    if (src[k] && typeof src[k] === 'object' && !Array.isArray(src[k]) && target[k] && typeof target[k] ===
+                        'object') {
+                        deepMerge(target[k], src[k]);
+                    } else {
+                        target[k] = src[k];
+                    }
+                }
+            }
+
+            // === RENDER ===
+            let renderQueued = false;
+
+            function scheduleRender() {
+                if (renderQueued) return;
+                renderQueued = true;
+                requestAnimationFrame(() => { renderQueued = false;
+                    renderAll(); });
+            }
+
+            function xpForLevel() { return CONFIG.BASE_XP + (state.level - 1) * 20; }
+
+            function addXP(amount, label) {
+                state.xp += amount;
+                state.totalXP += amount;
+                sound.xp();
+                showToast(label ? '⚡ ' + label : '⚡ Опыт получен', label ? 'Опыт получен.' : 'Продолжай в том же духе.',
+                amount);
+                checkLevelUp();
+                checkRankUp();
+                checkAchievements();
+                queueSave();
+                scheduleRender();
+            }
+
+            function checkLevelUp() {
+                let needed = xpForLevel();
+                while (state.xp >= needed) {
+                    state.xp -= needed;
+                    state.level++;
+                    sound.levelUp();
+                    showToast('⬆ УРОВЕНЬ ПОВЫШЕН!', 'Ты достиг LV. ' + state.level + '! Статы усилены.');
+                    for (const k in state.stats) state.stats[k] = Math.floor(state.stats[k] * 1.05) + 1;
+                    needed = xpForLevel();
+                }
+            }
+
+            function checkRankUp() {
+                const next = CONFIG.RANKS[state.rankIdx + 1];
+                if (next && state.totalXP >= next.totalXP) {
+                    state.rankIdx++;
+                    sound.rankUp();
+                    showToast('🏆 РАНГ ПОВЫШЕН!', 'Поздравляю! Новый ранг: ' + next.label + '!');
+                    grantArtifact('⚔️ Клинок ' + next.label, 'Ранг ' + next.label, '+5 ко всем статам');
+                    for (const k in state.stats) state.stats[k] += 5;
+                }
+            }
+
+            function grantArtifact(name, desc, effect) {
+                state.artifacts.push({ name, desc, effect });
+                showToast('🎁 АРТЕФАКТ ПОЛУЧЕН!', name + ': ' + effect);
+            }
+
+            function checkAchievements() {
+                CONFIG.ACHIEVEMENTS.forEach(a => {
+                    if (state.unlockedAchievements.includes(a.id)) return;
+                    if (a.get(state) >= a.target) {
+                        state.unlockedAchievements.push(a.id);
+                        if (a.reward.all) { for (const k in state.stats) state.stats[k] += a.reward.all; } else if (a
+                            .reward.stat) { state.stats[a.reward.stat] = (state.stats[a.reward.stat] || 0) + a
+                                .reward.val; }
+                        grantArtifact(a.icon + ' ' + a.name, a.desc, 'Достижение разблокировано');
+                    }
+                });
+            }
+
+            // === DAY ROLLOVER ===
+            function todayStr() { return new Date().toISOString().split('T')[0]; }
+
+            function yesterdayStr() { const d = new Date();
+                d.setDate(d.getDate() - 1); return d.toISOString().split('T')[0]; }
+
+            function rolloverIfNeeded() {
+                const today = todayStr();
+                if (state.lastActiveDate === today) return;
+                if (state.lastActiveDate && state.lastActiveDate !== yesterdayStr()) {
+                    state.streak = 0;
+                }
+                state.quests = CONFIG.QUESTS.map(() => false);
+                state.water = 0;
+                state.food = { cal: 0, protein: 0 };
+                state.lastActiveDate = today;
+            }
+
+            function recordHistory() {
+                const total = CONFIG.QUESTS.length;
+                const done = state.quests.filter(Boolean).length;
+                state.history[todayStr()] = total ? done / total : 0;
+                const keys = Object.keys(state.history).sort();
+                while (keys.length > 90) { delete state.history[keys.shift()]; }
+            }
+
+            // === QUESTS ===
+            function completeQuest(index) {
+                if (state.quests[index]) return;
+                state.quests[index] = true;
+                const q = CONFIG.QUESTS[index];
+                if (q.stat) state.stats[q.stat] = (state.stats[q.stat] || 0) + q.val;
+                recordHistory();
+                addXP(q.xp, 'Квест "' + q.label + '" выполнен!');
+                const allDone = state.quests.every(Boolean);
+                if (allDone) {
+                    showToast('🎉 ВСЕ КВЕСТЫ ВЫПОЛНЕНЫ!', 'Ежедневные задания завершены. +30 бонусных XP.');
+                    state.daysCompleted++;
+                    state.totalDays++;
+                    if (state.streakAwardedDate !== todayStr()) {
+                        state.streak++;
+                        state.streakAwardedDate = todayStr();
+                    }
+                    updateFakeHunters();
+                    addXP(30, 'Бонус за день');
+                }
+            }
+
+            function addCustomQuest() {
+                const label = prompt('Название разового квеста:');
+                if (!label) return;
+                let xp = parseInt(prompt('Сколько XP он стоит?', '10'), 10);
+                if (!Number.isFinite(xp) || xp <= 0) xp = 10;
+                state.customQuests.push({ id: 'c' + Date.now(), label, xp });
+                showToast('📌 Квест добавлен', label);
+                queueSave();
+                scheduleRender();
+            }
+
+            function completeCustomQuest(idx) {
+                const q = state.customQuests[idx];
+                if (!q) return;
+                state.customQuests.splice(idx, 1);
+                addXP(q.xp, 'Разовый квест "' + q.label + '" выполнен!');
+            }
+
+            // === WATER / FOOD ===
+            function addWater(amount) {
+                if (amount === 'reset') {
+                    state.water = 0;
+                    state.waterLast = null;
+                    showToast('💧 Вода сброшена', 'Начни заново.');
+                    sound.error();
+                } else {
+                    state.water += amount;
+                    state.waterLast = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    sound.water();
+                    if (state.water >= CONFIG.WATER_GOAL && !state.quests[5]) {
+                        completeQuest(5);
+                    } else if (state.water >= CONFIG.WATER_GOAL) {
+                        showToast('💧 Норма воды выполнена', 'Отличная работа.');
+                    }
+                }
+                queueSave();
+                scheduleRender();
+            }
+
+            function addFood(cal, protein) {
+                state.food.cal += cal;
+                state.food.protein += protein;
+                if (state.food.protein >= CONFIG.PROTEIN_GOAL && state.food.protein - protein < CONFIG.PROTEIN_GOAL) {
+                    addXP(15, 'Норма белка выполнена');
+                }
+                if (state.food.cal >= CONFIG.CAL_GOAL && state.food.cal - cal < CONFIG.CAL_GOAL) {
+                    addXP(10, 'Норма калорий выполнена');
+                }
+                queueSave();
+                scheduleRender();
+            }
+
+            // === TRAINING / CODE ===
+            function pushLog(arrKey, text) {
+                const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                state[arrKey].log = state[arrKey].log || [];
+                state[arrKey].log.unshift({ time, text });
+                if (state[arrKey].log.length > 50) state[arrKey].log.pop();
+            }
+
+            function trainStrike() {
+                state.training.power = Math.min(100, state.training.power + 3);
+                state.training.endurance = Math.min(100, state.training.endurance + 2);
+                pushLog('training', '⚡ Удары: +3 силы, +2 выносливости');
+                addXP(5, 'Тренировка ударов');
+            }
+
+            function trainStretch() {
+                state.training.flex = Math.min(100, state.training.flex + 4);
+                pushLog('training', '🧘 Растяжка: +4 гибкости');
+                addXP(10, 'Растяжка');
+            }
+
+            function trainTech() {
+                state.training.tech = Math.min(100, state.training.tech + 3);
+                state.training.power = Math.min(100, state.training.power + 1);
+                pushLog('training', '📖 Техника: +3 техники, +1 силы');
+                addXP(8, 'Техника');
+            }
+
+            function studyCode() {
+                state.code.hours += 0.5;
+                const today = todayStr();
+                if (state.code.lastStudyDate !== today) {
+                    state.code.streak++;
+                    state.code.lastStudyDate = today;
+                }
+                pushLog('code', '📚 Учёба: +0.5 часа');
+                addXP(15, 'Учёба');
+            }
+
+            function topicDone() {
+                const available = CONFIG.TOPICS.filter(t => !state.code.topics.includes(t));
+                if (available.length === 0) {
+                    showToast('📚 Все темы изучены!', 'Ты великий мастер знаний.');
+                    return;
+                }
+                const topic = available[Math.floor(Math.random() * available.length)];
+                state.code.topics.push(topic);
+                pushLog('code', '✅ Тема изучена: ' + topic);
+                addXP(20, 'Тема "' + topic + '" изучена');
+            }
+
+            // === HEART ===
+            function addHeartTime() {
+                state.heart.time += 30;
+                sound.heart();
+                showToast('❤️ Время вместе', '30 минут с любимым человеком.', 10);
+                addXP(10, 'Время вместе');
+            }
+
+            function toggleIdea(i) {
+                if (state.heart.ideasDone.includes(i)) return;
+                state.heart.ideasDone.push(i);
+                showToast('💡 Идея выполнена!', 'Ты сделал что-то приятное.', 5);
+                addXP(5, 'Идея выполнена');
+            }
+
+            function randomIdea() {
+                const idea = CONFIG.DATE_IDEAS[Math.floor(Math.random() * CONFIG.DATE_IDEAS.length)];
+                showToast('💡 Идея для свидания', idea);
+                sound.heart();
+            }
+
+            // === SLEEP ===
+            function toMinutes(hhmm) { const [h, m] = hhmm.split(':').map(Number); return h * 60 + m; }
+
+            function startSleep() {
+                state.sleep.bedtime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                state.sleep.wakeup = null;
+                showToast('🌙 Спокойной ночи', 'Система переходит в режим восстановления.');
+                queueSave();
+                scheduleRender();
+            }
+
+            function wakeUp() {
+                if (!state.sleep.bedtime) {
+                    showToast('⚠️ Ошибка', 'Ты ещё не ложился спать.');
+                    sound.error();
+                    return;
+                }
+                state.sleep.wakeup = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                let mins = toMinutes(state.sleep.wakeup) - toMinutes(state.sleep.bedtime);
+                if (mins < 0) mins += 24 * 60;
+                state.sleep.hours = Math.round((mins / 60) * 10) / 10;
+                state.sleep.quality = Math.min(100, Math.round((state.sleep.hours / 8) * 100));
+                if (state.sleep.quality >= 90) addXP(20, 'Отличный сон (' + state.sleep.hours + ' ч.)');
+                else if (state.sleep.quality >= 70) addXP(10, 'Хороший сон (' + state.sleep.hours + ' ч.)');
+                else showToast('🌅 Пробуждение', state.sleep.hours + ' ч. Не хватает сна.');
+                if (state.sleep.hours >= 7.5 && !state.quests[6]) completeQuest(6);
+                queueSave();
+                scheduleRender();
+            }
+
+            // === PROGRESS ===
+            function updateMeasurements() {
+                const w = prompt('Текущий вес (кг):', state.progress.weight);
+                const wa = prompt('Обхват талии (см):', state.progress.waist);
+                const h = prompt('Обхват бёдер (см):', state.progress.hips);
+                if (w) state.progress.weight = parseFloat(w) || state.progress.weight;
+                if (wa) state.progress.waist = parseFloat(wa) || state.progress.waist;
+                if (h) state.progress.hips = parseFloat(h) || state.progress.hips;
+                showToast('📸 Прогресс обновлён', 'Замеры сохранены.');
+                queueSave();
+                scheduleRender();
+            }
+
+            // === FAKE HUNTERS ===
+            function seedFakeHunters() {
+                return CONFIG.FAKE_HUNTERS.map((name, i) => ({
+                    name,
+                    level: Math.max(1, Math.floor(Math.random() * (state.level + 2)) - 1),
+                    rankIdx: Math.min(CONFIG.RANKS.length - 1, Math.floor((i + 1) / 2)),
+                    xp: (i + 1) * 60 + Math.floor(Math.random() * 30)
+                }));
+            }
+
+            function updateFakeHunters() {
+                fakeHunters.forEach(h => {
+                    if (Math.random() < .3) {
+                        h.level += 0.2;
+                        h.xp += 5 + Math.floor(Math.random() * 15);
+                        h.rankIdx = Math.min(CONFIG.RANKS.length - 1, Math.floor(h.level / 3));
+                    }
+                });
+                fakeHunters.sort((a, b) => b.level - a.level);
+                if (fakeHunters.length > 7) fakeHunters.length = 7;
+            }
+
+            // === RADAR ===
+            function buildRadar() {
+                const keys = Object.keys(CONFIG.STAT_META);
+                const n = keys.length;
+                const size = 240,
+                    cx = size / 2,
+                    cy = size / 2,
+                    R = 88;
+                const max = Math.max(40, ...keys.map(k => state.stats[k] || 0)) * 1.15;
+                const pt = (i, r) => {
+                    const ang = -Math.PI / 2 + i * (2 * Math.PI / n);
+                    return [cx + r * Math.cos(ang), cy + r * Math.sin(ang)];
+                };
+                let rings = '';
+                [0.25, 0.5, 0.75, 1].forEach(f => {
+                    const pts = keys.map((_, i) => pt(i, R * f).join(',')).join(' ');
+                    rings += '<polygon points="' + pts + '" fill="none" stroke="rgba(0,229,255,0.08)" stroke-width="1"/>';
+                });
+                let spokes = '',
+                    labels = '';
+                keys.forEach((k, i) => {
+                    const [x, y] = pt(i, R);
+                    spokes += '<line x1="' + cx + '" y1="' + cy + '" x2="' + x + '" y2="' + y +
+                        '" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>';
+                    const [lx, ly] = pt(i, R + 20);
+                    labels +=
+                        '<text x="' + lx + '" y="' + ly + '" fill="#7291b3" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle" dominant-baseline="middle">' +
+                        CONFIG.STAT_META[k].icon + ' ' + CONFIG.STAT_META[k].short + '</text>';
+                });
+                const dataPts = keys.map((k, i) => pt(i, R * Math.min(1, (state.stats[k] || 0) / max)).join(',')).join(' ');
+                return '<svg viewBox="0 0 ' + size + ' ' + size + '" width="' + size + '" height="' + size + '">' +
+                    rings + spokes +
+                    '<polygon points="' + dataPts +
+                    '" fill="rgba(0,229,255,0.16)" stroke="#00e5ff" stroke-width="2" stroke-linejoin="round" style="filter:drop-shadow(0 0 6px rgba(0,229,255,.5));"/>' +
+                    labels +
+                    '</svg>';
+            }
+
+            // === RENDER ALL ===
+            function renderAll() {
+                renderHeader();
+                renderStats();
+                renderQuests();
+                renderTraining();
+                renderCode();
+                renderHeart();
+                renderFood();
+                renderSleep();
+                renderInventoryAndAchievements();
+                renderProfile();
+                renderLeaderboard();
+                renderProgress();
+                renderAnalytics();
+                renderSettings();
+            }
+
+            function renderHeader() {
+                const rank = CONFIG.RANKS[state.rankIdx];
+                $.rankBadge.textContent = rank.label;
+                $.levelBadge.textContent = 'LV. ' + state.level;
+                $.streakBadge.textContent = '🔥 ' + state.streak + ' дн.';
+            }
+
+            function renderStats() {
+                const needed = xpForLevel();
+                const pct = Math.min(100, (state.xp / needed) * 100);
+                const colorClass = { will: '', atk: 'cyan', def: '', agi: 'cyan', int: 'purple', end: '', cha: 'gold',
+                    mana: '' };
+                let html = '';
+                Object.keys(CONFIG.STAT_META).forEach(k => {
+                    const m = CONFIG.STAT_META[k];
+                    html += '<div class="stat"><span class="label">' + m.icon + ' ' + m.label +
+                        '</span><span class="value ' + (colorClass[k] || '') + '">' + (state.stats[k] || 0) +
+                        '</span></div>';
+                });
+                html += '<div class="xp-bar"><div class="track"><div class="fill" style="width:' + pct + '%"></div></div>' +
+                    '<div class="info"><span>' + Math.floor(state.xp) + '</span><span>' + needed + '</span></div></div>';
+                $.statsGrid.innerHTML = html;
+            }
+
+            function renderQuests() {
+                let html = CONFIG.QUESTS.map((q, i) => {
+                    const done = state.quests[i];
+                    return '<div class="quest' + (done ? ' done' : '') + '" data-quest="' + i + '">' +
+                        '<div class="check">✓</div>' +
+                        '<div class="info"><div class="q-title">' + q.label + '</div><div class="q-desc">' + q.desc +
+                        '</div></div>' +
+                        '<div class="q-xp">+' + q.xp + ' XP</div>' +
+                        '</div>';
+                }).join('');
+                html += state.customQuests.map((q, i) =>
+                    '<div class="quest custom" data-custom="' + i + '">' +
+                    '<div class="check">✓</div>' +
+                    '<div class="info"><div class="q-title">' + q.label + '</div><div class="q-desc">Разовый квест</div></div>' +
+                    '<div class="q-xp">+' + q.xp + ' XP</div>' +
+                    '<div class="q-remove" data-remove="' + i + '">✕</div>' +
+                    '</div>'
+                ).join('');
+                $.questList.innerHTML = html;
+                const done = state.quests.filter(Boolean).length;
+                $.questProgress.textContent = done + ' / ' + CONFIG.QUESTS.length;
+            }
+
+            function renderTraining() {
+                const t = state.training;
+                const bars = [
+                    ['power', 'cyan', '⚡ Сила'],
+                    ['flex', 'gold', '🧘 Гибкость'],
+                    ['tech', 'pink', '📖 Техника'],
+                    ['endurance', 'purple', '🔥 Выносливость']
+                ];
+                $.trainStats.innerHTML = bars.map(([k, c, label]) =>
+                    '<div class="train-card"><div class="label">' + label + '</div><div class="value ' + c + '">' + t[
+                        k] + '</div>' +
+                    '<div class="bar"><div class="fill ' + c + '" style="width:' + t[k] + '%"></div></div></div>'
+                ).join('');
+                $.trainLog.innerHTML = t.log && t.log.length ?
+                    t.log.slice(0, 10).map(e => '<div class="entry"><span class="time">' + e.time + '</span>' + e.text +
+                        '</div>').join('') :
+                    '<div class="entry"><span class="time">⚔️</span>Начни тренировку, Охотник.</div>';
+            }
+
+            function renderCode() {
+                $.codeStats.innerHTML =
+                    '<div class="food-card"><div class="num green">' + state.code.hours.toFixed(1) +
+                    '</div><div class="label">Часов учёбы</div></div>' +
+                    '<div class="food-card"><div class="num cyan">' + state.code.topics.length +
+                    '</div><div class="label">Тем изучено</div></div>' +
+                    '<div class="food-card"><div class="num gold">' + state.code.streak +
+                    '</div><div class="label">Стрик учёбы</div></div>';
+                $.codeTopicsList.innerHTML = CONFIG.TOPICS.map(t =>
+                    '<span class="topic-tag' + (state.code.topics.includes(t) ? ' done' : '') + '">' + t + '</span>'
+                ).join('');
+                $.codeLog.innerHTML = state.code.log && state.code.log.length ?
+                    state.code.log.slice(0, 10).map(e => '<div class="entry"><span class="time">' + e.time + '</span>' + e
+                        .text + '</div>').join('') :
+                    '<div class="entry"><span class="time">💻</span>Начни изучение, Охотник.</div>';
+            }
+
+            function renderHeart() {
+                $.heartCard.innerHTML =
+                    '<div class="name">🌹 Близкий человек</div>' +
+                    '<div class="detail">🌸 Любимые цветы: <span>' + state.companion.flowers + '</span></div>' +
+                    '<div class="detail">🍽️ Еда: <span>' + state.companion.food + '</span></div>' +
+                    '<div class="detail">📱 ТикТок: <span>' + state.companion.tiktok + '</span></div>' +
+                    '<div class="detail" style="margin-top:6px;">💕 Время вместе сегодня: <span class="cyan">' + state
+                    .heart.time + '</span> мин</div>';
+                $.ideasGrid.innerHTML = CONFIG.DATE_IDEAS.map((idea, i) =>
+                    '<div class="idea-item' + (state.heart.ideasDone.includes(i) ? ' done' : '') + '" data-idea="' + i +
+                    '"><span>' + idea + '</span><span>✨</span></div>'
+                ).join('');
+            }
+
+            function renderFood() {
+                $.foodStats.innerHTML =
+                    '<div class="food-card"><div class="num green">' + state.food.cal +
+                    '</div><div class="label">Калории</div></div>' +
+                    '<div class="food-card"><div class="num blue">' + state.food.protein +
+                    '</div><div class="label">Белок (г)</div></div>' +
+                    '<div class="food-card"><div class="num gold">' + Math.min(100, Math.round((state.food.cal / CONFIG
+                        .CAL_GOAL) * 100)) + '%</div><div class="label">Норма</div></div>';
+                const waterPct = Math.min(100, (state.water / CONFIG.WATER_GOAL) * 100);
+                $.waterTrack.innerHTML =
+                    '<div class="info"><span>💧 Вода</span><span id="waterStatus">' + Math.floor(state.water) +
+                    ' / ' + CONFIG.WATER_GOAL + ' мл</span></div>' +
+                    '<div class="bar"><div class="fill" style="width:' + waterPct + '%"></div></div>' +
+                    '<div class="water-btns">' +
+                    '<button data-water="200">🥤 200 мл</button>' +
+                    '<button data-water="500">💧 500 мл</button>' +
+                    '<button data-water="300">🧊 300 мл</button>' +
+                    '<button data-water="reset">🗑️ Сброс</button>' +
+                    '</div>' +
+                    '<div style="font-size:9px;color:var(--text-faint);margin-top:4px;font-family:var(--f-mono);">⏰ Последний раз: <span>' +
+                    (state.waterLast || '—') + '</span></div>';
+                let tip = '🍽️ Добавь продукты, чтобы получить совет';
+                if (state.food.protein < CONFIG.PROTEIN_GOAL * 0.6) tip = '⚠️ Мало белка! Съешь курицу, творог или яйца.';
+                else if (state.food.protein < CONFIG.PROTEIN_GOAL) tip = '💪 Хороший темп! Добавь ещё белка до нормы.';
+                else if (state.food.cal < CONFIG.CAL_GOAL * 0.7) tip = '🍚 Нужно больше калорий! Добавь сложные углеводы.';
+                else if (state.food.cal >= CONFIG.CAL_GOAL) tip = '🔥 Отлично! Норма по калориям и белку выполнена.';
+                $.foodTip.textContent = tip;
+            }
+
+            function renderSleep() {
+                $.sleepTrack.innerHTML =
+                    '<div class="row"><span class="label">🛌 Время сна</span><span class="value">' + (state.sleep
+                        .hours || '0') + '</span></div>' +
+                    '<div class="row"><span class="label">⏰ Лёг спать</span><span class="value">' + (state.sleep
+                        .bedtime || '—') + '</span></div>' +
+                    '<div class="row"><span class="label">🌅 Проснулся</span><span class="value">' + (state.sleep
+                        .wakeup || '—') + '</span></div>' +
+                    '<div class="row"><span class="label">💤 Качество сна</span><span class="value gold">' + state
+                    .sleep.quality + '%</span></div>';
+                let tip = 'Ложись спать до 23:00 для максимального восстановления.';
+                if (state.sleep.quality >= 90) tip = '🌟 Отличный сон! Полное восстановление.';
+                else if (state.sleep.quality >= 70) tip = '💤 Хороший сон. Продолжай в том же духе.';
+                else if (state.sleep.quality > 0) tip = '😴 Постарайся спать больше 7.5 часов.';
+                $.sleepTip.textContent = tip;
+            }
+
+            function renderInventoryAndAchievements() {
+                $.inventoryGrid.innerHTML = state.artifacts.length ?
+                    state.artifacts.map(a => {
+                        const icon = a.name.split(' ')[0] || '🎁';
+                        return '<div class="artifact"><span class="icon">' + icon +
+                            '</span><div class="name">' + a.name + '</div><div class="effect">' + a.effect +
+                            '</div></div>';
+                    }).join('') :
+                    '<div class="artifact locked"><span class="icon">❓</span><div class="name">Скрыто</div><div class="effect">Продолжай качаться</div></div>';
+                $.achList.innerHTML = CONFIG.ACHIEVEMENTS.map(a => {
+                    const unlocked = state.unlockedAchievements.includes(a.id);
+                    const val = Math.min(a.target, a.get(state));
+                    const pct = Math.round((val / a.target) * 100);
+                    return '<div class="ach-row' + (unlocked ? '' : ' locked') + '">' +
+                        '<div class="a-icon">' + (unlocked ? a.icon : '🔒') + '</div>' +
+                        '<div class="a-info"><div class="a-name">' + a.name +
+                        '</div><div class="a-desc">' + a.desc + (unlocked ? '' : ' — ' + val + '/' + a.target) +
+                        '</div>' +
+                        (unlocked ? '' : '<div class="a-bar"><i style="width:' + pct + '%"></i></div>') +
+                        '</div></div>';
+                }).join('');
+            }
+
+            function renderProfile() {
+                $.radarWrap.innerHTML = buildRadar();
+                const days = [];
+                for (let i = 27; i >= 0; i--) {
+                    const d = new Date();
+                    d.setDate(d.getDate() - i);
+                    days.push(d.toISOString().split('T')[0]);
+                }
+                let activeDays = 0;
+                $.heatmapWrap.innerHTML =
+                    '<div class="info" style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-dim);font-family:var(--f-mono);">' +
+                    '<span>📅 Активность за 28 дней</span><span id="heatmapPct">0%</span></div>' +
+                    '<div class="heatmap-grid">' +
+                    days.map(d => {
+                        const frac = state.history[d] || 0;
+                        if (frac > 0) activeDays++;
+                        let lvl = 0;
+                        if (frac >= 1) lvl = 4;
+                        else if (frac >= 0.66) lvl = 3;
+                        else if (frac >= 0.33) lvl = 2;
+                        else if (frac > 0) lvl = 1;
+                        return '<div class="hcell" data-lvl="' + lvl + '" title="' + d + '"></div>';
+                    }).join('') +
+                    '</div>' +
+                    '<div class="heatmap-legend"><span>меньше</span>' +
+                    '<div class="hcell" style="width:9px;"></div><div class="hcell" data-lvl="1" style="width:9px;"></div>' +
+                    '<div class="hcell" data-lvl="2" style="width:9px;"></div><div class="hcell" data-lvl="3" style="width:9px;"></div>' +
+                    '<div class="hcell" data-lvl="4" style="width:9px;"></div><span>больше</span></div>';
+                document.getElementById('heatmapPct').textContent = Math.round((activeDays / 28) * 100) + '%';
+            }
+
+            function renderLeaderboard() {
+                const rank = CONFIG.RANKS[state.rankIdx];
+                const all = [...fakeHunters, { name: 'Ты', level: state.level, rankIdx: state.rankIdx, xp: state.xp,
+                        isMe: true }];
+                all.sort((a, b) => b.level !== a.level ? b.level - a.level : b.xp - a.xp);
+                $.leaderboard.innerHTML = all.slice(0, 8).map((h, idx) => {
+                    const label = h.isMe ? rank.label : (CONFIG.RANKS[h.rankIdx] || CONFIG.RANKS[0]).label;
+                    const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '【' + (idx + 1) + '】';
+                    return '<div class="leader-row' + (h.isMe ? ' me' : '') + '"><span>' + medal + '</span>' +
+                        '<span class="name">' + (h.isMe ? '⭐ ' : '') + h.name + '</span>' +
+                        '<span class="rank">' + label + '</span><span class="lvl">LV.' + Math.floor(h.level) +
+                        '</span></div>';
+                }).join('');
+            }
+
+            function renderProgress() {
+                $.progressGrid.innerHTML =
+                    '<div class="progress-card"><div class="num">' + state.progress.weight +
+                    ' кг</div><div class="label">Вес</div></div>' +
+                    '<div class="progress-card"><div class="num">' + state.progress.waist +
+                    ' см</div><div class="label">Талия</div></div>' +
+                    '<div class="progress-card"><div class="num">' + state.progress.hips +
+                    ' см</div><div class="label">Бёдра</div></div>';
+            }
+
+            function renderAnalytics() {
+                const questDone = state.quests.filter(Boolean).length;
+                const prod = Math.round((questDone / CONFIG.QUESTS.length) * 100);
+                const t = state.training;
+                const trainAvg = Math.round((t.power + t.flex + t.tech + t.endurance) / 4);
+                const study = Math.min(100, Math.round((state.code.topics.length / CONFIG.TOPICS.length) * 100));
+                const heart = Math.min(100, Math.round((state.heart.time / 120) * 100));
+                const cards = [
+                    ['🏆 Продуктивность', prod, 'cyan'],
+                    ['🥊 Тренировки', trainAvg, 'gold'],
+                    ['💻 Учёба', study, 'purple'],
+                    ['❤️ Отношения', heart, 'pink']
+                ];
+                $.analyticsGrid.innerHTML = cards.map(([label, val, c]) =>
+                    '<div class="analytics-card"><div class="label">' + label +
+                    '</div><div class="value ' + c + '">' + val + '%</div>' +
+                    '<div class="mini-bar"><div class="fill ' + c + '" style="width:' + val +
+                    '%;background:currentColor;color:var(--' + c + ')"></div></div></div>'
+                ).join('');
+                $.analyticsTip.textContent = 'Квестов выполнено: ' + questDone + '/' + CONFIG.QUESTS.length + ' · Стрик: ' +
+                    state.streak + ' дн. · Всего дней завершено: ' + state.daysCompleted;
+            }
+
+            function renderSettings() {
+                $.settingsContent.innerHTML =
+                    '<h3 class="section-title">Общие</h3>' +
+                    '<div class="settings-row">' +
+                    '<div><div class="s-label">🔊 Звуковые эффекты</div><div class="s-hint">Тоны при получении опыта и наградах</div></div>' +
+                    '<div class="switch' + (state.settings.sound ? ' on' : '') + '" id="soundSwitch"><i></i></div>' +
+                    '</div>' +
+                    '<div class="settings-row" id="editCompanionRow" style="cursor:pointer;">' +
+                    '<div><div class="s-label">🌹 Данные о близком человеке</div><div class="s-hint">Цветы, еда, ТикТок</div></div>' +
+                    '<span style="color:var(--text-faint);">✎</span>' +
+                    '</div>' +
+                    '<h3 class="section-title" style="margin-top:14px;">Данные</h3>' +
+                    '<div class="settings-row" id="exportRow" style="cursor:pointer;">' +
+                    '<div><div class="s-label">⬇️ Экспортировать прогресс</div><div class="s-hint">Скачать резервную копию (.json)</div></div>' +
+                    '<span style="color:var(--text-faint);">›</span>' +
+                    '</div>' +
+                    '<div class="settings-row" id="importRow" style="cursor:pointer;">' +
+                    '<div><div class="s-label">⬆️ Импортировать прогресс</div><div class="s-hint">Загрузить резервную копию</div></div>' +
+                    '<span style="color:var(--text-faint);">›</span>' +
+                    '</div>' +
+                    '<input type="file" id="importFile" accept="application/json" hidden>' +
+                    '<div class="tip" id="storageNote" style="margin-top:10px;">' +
+                    (Storage.available ? '💾 Прогресс сохраняется автоматически.' :
+                        '⚠️ Хранилище недоступно в этом окружении — прогресс будет потерян при перезагрузке страницы. Экспортируй резервную копию, чтобы не потерять данные.') +
+                    '</div>' +
+                    '<div class="danger-zone">' +
+                    '<button class="btn pink wide" id="resetBtn">⟳ Перерождение (сброс всего прогресса)</button>' +
+                    '</div>';
+                // Вешаем события заново
+                document.getElementById('soundSwitch').addEventListener('click', () => {
+                    state.settings.sound = !state.settings.sound;
+                    queueSave();
+                    scheduleRender();
+                    if (state.settings.sound) tone(900, .05);
+                });
+                document.getElementById('editCompanionRow').addEventListener('click', () => {
+                    const f = prompt('Любимые цветы:', state.companion.flowers);
+                    const fo = prompt('Еда:', state.companion.food);
+                    const tt = prompt('ТикТок:', state.companion.tiktok);
+                    if (f !== null) state.companion.flowers = f;
+                    if (fo !== null) state.companion.food = fo;
+                    if (tt !== null) state.companion.tiktok = tt;
+                    queueSave();
+                    scheduleRender();
+                });
+                document.getElementById('exportRow').addEventListener('click', exportData);
+                document.getElementById('importRow').addEventListener('click', () => document.getElementById('importFile')
+                    .click());
+                document.getElementById('importFile').addEventListener('change', e => {
+                    if (e.target.files[0]) importData(e.target.files[0]);
+                    e.target.value = '';
+                });
+                document.getElementById('resetBtn').addEventListener('click', resetGame);
+            }
+
+            // === EXPORT/IMPORT ===
+            function exportData() {
+                const payload = JSON.stringify({ state, fakeHunters }, null, 2);
+                const blob = new Blob([payload], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'fuel-fighter-backup-' + todayStr() + '.json';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+                showToast('⬇️ Экспортировано', 'Резервная копия скачана.');
+            }
+
+            function importData(file) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    try {
+                        const data = JSON.parse(reader.result);
+                        if (data.state) deepMerge(state, data.state);
+                        if (Array.isArray(data.fakeHunters)) fakeHunters = data.fakeHunters;
+                        showToast('⬆️ Импортировано', 'Прогресс восстановлен из файла.');
+                        queueSave();
+                        scheduleRender();
+                    } catch (_) {
+                        showToast('⚠️ Ошибка импорта', 'Файл повреждён или имеет неверный формат.');
+                        sound.error();
+                    }
+                };
+                reader.readAsText(file);
+            }
+
+            // === RESET ===
+            async function resetGame() {
+                if (!confirm('🗡️ Перерождение сбросит весь прогресс безвозвратно. Продолжить?')) return;
+                await Storage.set('fighterData', '');
+                location.reload();
+            }
+
+            // === WIRE EVENTS ===
+            function wireEvents() {
+                document.getElementById('tabs').addEventListener('click', e => {
+                    const btn = e.target.closest('.tab');
+                    if (!btn) return;
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.getElementById(btn.dataset.tab).classList.add('active');
+                });
+
+                $.questList.addEventListener('click', e => {
+                    initAudio();
+                    const rm = e.target.closest('[data-remove]');
+                    if (rm) { state.customQuests.splice(parseInt(rm.dataset.remove, 10), 1);
+                        queueSave();
+                        scheduleRender(); return; }
+                    const q = e.target.closest('[data-quest]');
+                    if (q) { completeQuest(parseInt(q.dataset.quest, 10)); return; }
+                    const c = e.target.closest('[data-custom]');
+                    if (c) { completeCustomQuest(parseInt(c.dataset.custom, 10)); }
+                });
+                document.getElementById('addQuestBtn').addEventListener('click', addCustomQuest);
+
+                $.waterTrack.addEventListener('click', e => {
+                    const btn = e.target.closest('[data-water]');
+                    if (btn) { const v = btn.dataset.water;
+                        addWater(v === 'reset' ? 'reset' : parseInt(v, 10)); }
+                });
+
+                document.getElementById('foodAdd100').addEventListener('click', () => addFood(100, 5));
+                document.getElementById('foodAddProtein').addEventListener('click', () => addFood(150, 30));
+
+                document.getElementById('trainStrike').addEventListener('click', trainStrike);
+                document.getElementById('trainStretch').addEventListener('click', trainStretch);
+                document.getElementById('trainTechBtn').addEventListener('click', trainTech);
+
+                document.getElementById('codeStudy').addEventListener('click', studyCode);
+                document.getElementById('codeTopicDone').addEventListener('click', topicDone);
+
+                document.getElementById('heartAddTime').addEventListener('click', addHeartTime);
+                document.getElementById('heartIdea').addEventListener('click', randomIdea);
+                $.ideasGrid.addEventListener('click', e => {
+                    const item = e.target.closest('[data-idea]');
+                    if (item) toggleIdea(parseInt(item.dataset.idea, 10));
+                });
+
+                document.getElementById('sleepStart').addEventListener('click', startSleep);
+                document.getElementById('sleepWake').addEventListener('click', wakeUp);
+
+                document.getElementById('progressUpdate').addEventListener('click', updateMeasurements);
+
+                document.addEventListener('touchstart', initAudio, { once: true });
+                document.addEventListener('click', initAudio, { once: true });
+            }
+
+            // === INIT ===
+            async function init() {
+                cacheDom();
+                const bootStart = Date.now();
+                const loaded = await restore();
+                rolloverIfNeeded();
+                if (!fakeHunters.length) fakeHunters = seedFakeHunters();
+                if (!loaded) {
+                    grantArtifact('🗡️ Кинжал Новичка', 'Стартовый артефакт', '+2 к Атаке');
+                    state.stats.atk += 2;
+                }
+                wireEvents();
+                renderAll();
+                showToast(loaded ? '🗡️ СИСТЕМА ЗАГРУЖЕНА' : '🗡️ ПРОБУЖДЕНИЕ',
+                    loaded ? 'Продолжай свой путь, Охотник.' : 'Добро пожаловать. Система активирована.');
+                $.bootTime.textContent = new Date().toLocaleDateString('ru-RU');
+                queueSave();
+                const elapsed = Date.now() - bootStart;
+                setTimeout(() => $.boot.classList.add('hide'), Math.max(400 - elapsed, 0));
+                setTimeout(() => {
+                    if (state.level === 1 && state.xp === 0 && state.totalXP === 0) {
+                        showToast('💡 СОВЕТ СИСТЕМЫ', 'Начни с выполнения квестов — они принесут первый опыт.');
+                    }
+                }, 2600);
+            }
+
+            document.addEventListener('DOMContentLoaded', init);
+        })();
+    </script>
 </body>
 </html>
