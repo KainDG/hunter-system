@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         /* ============================================================
-           🎨  ГЛОБАЛЬНЫЙ СТИЛЬ — SOLO LEVELING
+           🎨  ГЛОБАЛЬНЫЙ СТИЛЬ
            ============================================================ */
         * {
             margin: 0;
@@ -43,6 +43,7 @@
             min-height: 100dvh;
             display: flex;
             justify-content: center;
+            align-items: center;
             padding: 10px;
             background-image: radial-gradient(circle at 20% 20%, rgba(0, 100, 200, .06), transparent 40%), radial-gradient(circle at 80% 80%, rgba(150, 50, 200, .04), transparent 40%);
         }
@@ -52,6 +53,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+            padding-bottom: 10px;
         }
 
         /* ============================================================
@@ -68,82 +70,147 @@
         }
 
         /* ============================================================
-           🏷️  ШАПКА
+           🏷️  ШАПКА С ТИТУЛОМ
            ============================================================ */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-            gap: 6px;
+        .title-section {
+            text-align: center;
+            padding: 6px 0 12px 0;
+            position: relative;
         }
-        .header h1 {
+        .title-section .rank-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 229, 255, .06), transparent 70%);
+            pointer-events: none;
+            transition: all 1s ease;
+        }
+        .title-section .rank-glow.gold {
+            background: radial-gradient(circle, rgba(255, 203, 61, .12), transparent 70%);
+        }
+        .title-section .rank-glow.purple {
+            background: radial-gradient(circle, rgba(180, 117, 255, .15), transparent 70%);
+        }
+        .title-section .rank-glow.pink {
+            background: radial-gradient(circle, rgba(255, 92, 143, .12), transparent 70%);
+        }
+
+        .title-section .hunter-name {
             font-family: var(--f-display);
-            font-size: 19px;
+            font-size: 24px;
             font-weight: 700;
+            letter-spacing: 2px;
             background: linear-gradient(135deg, #fff, var(--cyan));
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
+            position: relative;
+            z-index: 1;
         }
-        .header h1 small {
-            display: block;
+        .title-section .hunter-rank {
+            font-family: var(--f-mono);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--cyan);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-top: 2px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 0 20px rgba(0, 229, 255, .15);
+            transition: color .5s, text-shadow .5s;
+        }
+        .title-section .hunter-rank.gold {
+            color: var(--gold);
+            text-shadow: 0 0 20px rgba(255, 203, 61, .2);
+        }
+        .title-section .hunter-rank.purple {
+            color: var(--purple);
+            text-shadow: 0 0 20px rgba(180, 117, 255, .25);
+        }
+        .title-section .hunter-rank.pink {
+            color: var(--pink);
+            text-shadow: 0 0 20px rgba(255, 92, 143, .2);
+        }
+
+        .title-section .hunter-stats {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 6px;
             font-family: var(--f-mono);
             font-size: 9px;
             color: var(--text-dim);
-            -webkit-text-fill-color: var(--text-dim);
-            letter-spacing: 2px;
-            font-weight: 400;
+            position: relative;
+            z-index: 1;
         }
-        .badges {
+        .title-section .hunter-stats span {
             display: flex;
+            align-items: center;
             gap: 4px;
-            flex-wrap: wrap;
         }
-        .badge {
-            font-family: var(--f-mono);
-            background: rgba(0, 180, 255, .05);
-            border: 1px solid rgba(0, 180, 255, .06);
-            padding: 2px 10px;
-            border-radius: 30px;
+        .title-section .hunter-stats .num {
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .title-section .xp-progress {
+            margin: 10px auto 0;
+            max-width: 260px;
+            width: 100%;
+        }
+        .title-section .xp-progress .track {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, .04);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .title-section .xp-progress .track .fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--cyan), var(--purple));
+            border-radius: 10px;
+            transition: width .8s ease;
+        }
+        .title-section .xp-progress .info {
+            display: flex;
+            justify-content: space-between;
             font-size: 8px;
-            font-weight: 600;
+            color: var(--text-faint);
+            margin-top: 3px;
+            font-family: var(--f-mono);
+        }
+        .title-section .xp-progress .info .next-title {
             color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: .3px;
-        }
-        .badge.gold {
-            color: var(--gold);
-            border-color: rgba(255, 203, 61, .12);
-        }
-        .badge.cyan {
-            color: var(--cyan);
-            border-color: rgba(0, 229, 255, .1);
         }
 
         /* ============================================================
-           📊  БЫСТРЫЕ ИНДИКАТОРЫ (ДАШБОРД)
+           📊  БЫСТРЫЕ ИНДИКАТОРЫ
            ============================================================ */
         .quick-stats {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             gap: 6px;
-            margin-bottom: 12px;
+            margin: 4px 0 12px 0;
         }
         .quick-stat {
             background: var(--panel-flat);
             border-radius: 12px;
-            padding: 8px 6px;
+            padding: 6px 4px;
             text-align: center;
             border: 1px solid var(--border-soft);
         }
         .quick-stat .icon {
-            font-size: 14px;
+            font-size: 13px;
         }
         .quick-stat .value {
             font-family: var(--f-mono);
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             color: var(--text);
             margin-top: 1px;
@@ -162,7 +229,7 @@
             height: 3px;
             background: rgba(255, 255, 255, .04);
             border-radius: 10px;
-            margin-top: 4px;
+            margin-top: 3px;
             overflow: hidden;
         }
         .quick-stat .bar .fill {
@@ -181,37 +248,24 @@
         }
 
         /* ============================================================
-           📋  ПРОГРЕСС БАР
+           📋  КВЕСТЫ
            ============================================================ */
-        .progress-main {
-            margin-bottom: 12px;
-        }
-        .progress-main .track {
-            width: 100%;
-            height: 6px;
-            background: rgba(255, 255, 255, .04);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        .progress-main .track .fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, var(--cyan), var(--purple));
-            border-radius: 10px;
-            transition: width .8s ease;
-        }
-        .progress-main .info {
+        .quest-section-title {
+            font-family: var(--f-display);
+            font-size: 11px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
             display: flex;
             justify-content: space-between;
-            font-size: 9px;
-            color: var(--text-faint);
-            margin-top: 3px;
-            font-family: var(--f-mono);
+            align-items: center;
         }
-
-        /* ============================================================
-           📋  СПИСОК КВЕСТОВ (НА ГЛАВНОМ ЭКРАНЕ)
-           ============================================================ */
+        .quest-section-title .count {
+            color: var(--text-faint);
+            font-family: var(--f-mono);
+            font-size: 9px;
+        }
         .quest-list {
             display: flex;
             flex-direction: column;
@@ -235,7 +289,7 @@
             transform: scale(.97);
         }
         .quest-item.done {
-            opacity: .45;
+            opacity: .4;
         }
         .quest-item.done .q-title {
             text-decoration: line-through;
@@ -270,12 +324,12 @@
             font-family: var(--f-mono);
         }
         .quest-item .q-desc {
-            font-size: 9px;
+            font-size: 8px;
             color: var(--text-dim);
             margin-top: 1px;
         }
         .quest-item .q-xp {
-            font-size: 9px;
+            font-size: 8px;
             color: var(--gold);
             font-weight: 700;
             font-family: var(--f-mono);
@@ -284,6 +338,32 @@
             border-radius: 30px;
             border: 1px solid rgba(255, 203, 61, .04);
             flex-shrink: 0;
+        }
+        .quest-item .q-remove {
+            font-size: 12px;
+            color: var(--text-faint);
+            padding: 0 4px;
+            cursor: pointer;
+        }
+        .quest-item .q-remove:active {
+            color: var(--pink);
+        }
+
+        .add-quest-btn {
+            background: rgba(0, 180, 255, .03);
+            border: 1px dashed rgba(0, 180, 255, .08);
+            padding: 6px 12px;
+            border-radius: 12px;
+            color: var(--text-dim);
+            font-size: 9px;
+            font-family: var(--f-mono);
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+            transition: .2s;
+        }
+        .add-quest-btn:active {
+            transform: scale(.97);
         }
 
         /* ============================================================
@@ -298,29 +378,38 @@
             text-align: center;
             border: 1px solid var(--border-soft);
             font-family: var(--f-mono);
-            margin-bottom: 10px;
+            margin-top: 4px;
         }
 
         /* ============================================================
-           📱  НИЖНЯЯ НАВИГАЦИЯ (ТАБЫ)
+           📱  НИЖНЯЯ НАВИГАЦИЯ
            ============================================================ */
         .bottom-nav {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 4px;
             background: var(--panel);
             backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-radius: var(--radius);
             padding: 6px 4px;
             border: 1px solid var(--border);
             box-shadow: 0 0 40px rgba(0, 180, 255, .04);
             flex-shrink: 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            display: flex;
+            gap: 2px;
+            scroll-snap-type: x mandatory;
         }
-        .nav-btn {
+        .bottom-nav::-webkit-scrollbar {
+            display: none;
+        }
+        .bottom-nav .nav-btn {
+            flex: 0 0 auto;
+            min-width: 52px;
+            padding: 6px 8px;
             border: none;
             background: transparent;
             color: var(--text-dim);
-            padding: 6px 0;
             border-radius: 14px;
             cursor: pointer;
             transition: .25s;
@@ -334,18 +423,33 @@
             flex-direction: column;
             align-items: center;
             gap: 1px;
+            scroll-snap-align: center;
+            position: relative;
         }
-        .nav-btn .icon {
-            font-size: 18px;
+        .bottom-nav .nav-btn .icon {
+            font-size: 20px;
             line-height: 1;
+            transition: .25s;
         }
-        .nav-btn.active {
+        .bottom-nav .nav-btn .label {
+            font-size: 7px;
+            opacity: .6;
+            transition: .25s;
+        }
+        .bottom-nav .nav-btn.active {
             background: rgba(0, 180, 255, .06);
             color: var(--cyan);
             box-shadow: inset 0 0 0 1px rgba(0, 229, 255, .06);
         }
-        .nav-btn:active {
-            transform: scale(.94);
+        .bottom-nav .nav-btn.active .icon {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 6px rgba(0, 229, 255, .3));
+        }
+        .bottom-nav .nav-btn.active .label {
+            opacity: 1;
+        }
+        .bottom-nav .nav-btn:active {
+            transform: scale(.92);
         }
 
         /* ============================================================
@@ -378,7 +482,125 @@
         }
 
         /* ============================================================
-           🍎  ЕДА — ПРОДУКТЫ
+           🥊  ТРЕНИРОВКИ
+           ============================================================ */
+        .train-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+        .train-card {
+            background: var(--panel-flat);
+            border-radius: 10px;
+            padding: 8px 10px;
+            border: 1px solid var(--border-soft);
+        }
+        .train-card .label {
+            font-size: 7px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: .3px;
+        }
+        .train-card .value {
+            font-size: 16px;
+            font-weight: 700;
+            font-family: var(--f-mono);
+            margin-top: 1px;
+        }
+        .train-card .value.cyan {
+            color: var(--cyan);
+        }
+        .train-card .value.gold {
+            color: var(--gold);
+        }
+        .train-card .value.pink {
+            color: var(--pink);
+        }
+        .train-card .value.purple {
+            color: var(--purple);
+        }
+        .train-card .bar {
+            width: 100%;
+            height: 3px;
+            background: rgba(255, 255, 255, .04);
+            border-radius: 10px;
+            margin-top: 4px;
+            overflow: hidden;
+        }
+        .train-card .bar .fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width .8s ease;
+        }
+        .fill.cyan {
+            background: var(--cyan);
+        }
+        .fill.gold {
+            background: var(--gold);
+        }
+        .fill.pink {
+            background: var(--pink);
+        }
+        .fill.purple {
+            background: var(--purple);
+        }
+
+        .train-log {
+            max-height: 80px;
+            overflow-y: auto;
+            font-size: 9px;
+            color: var(--text-dim);
+            font-family: var(--f-mono);
+            background: var(--panel-flat);
+            border-radius: 10px;
+            padding: 8px 10px;
+            border: 1px solid var(--border-soft);
+        }
+        .train-log .entry {
+            padding: 2px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, .02);
+        }
+        .train-log .entry:last-child {
+            border-bottom: none;
+        }
+        .train-log .entry .time {
+            color: var(--text-faint);
+            margin-right: 4px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+        .btn {
+            background: rgba(0, 180, 255, .04);
+            border: 1px solid rgba(0, 180, 255, .04);
+            padding: 4px 12px;
+            border-radius: 30px;
+            color: var(--text-dim);
+            font-size: 9px;
+            cursor: pointer;
+            transition: .2s;
+            font-family: var(--f-mono);
+            touch-action: manipulation;
+        }
+        .btn:active {
+            transform: scale(.94);
+        }
+        .btn.gold {
+            border-color: rgba(255, 203, 61, .08);
+            color: var(--gold);
+        }
+        .btn.pink {
+            border-color: rgba(255, 92, 143, .08);
+            color: var(--pink);
+        }
+
+        /* ============================================================
+           🍎  ЕДА
            ============================================================ */
         .food-grid {
             display: grid;
@@ -494,94 +716,6 @@
         }
 
         /* ============================================================
-           🥊  ТРЕНИРОВКИ
-           ============================================================ */
-        .train-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 5px;
-            margin-bottom: 10px;
-        }
-        .train-card {
-            background: var(--panel-flat);
-            border-radius: 10px;
-            padding: 8px 10px;
-            border: 1px solid var(--border-soft);
-        }
-        .train-card .label {
-            font-size: 7px;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: .3px;
-        }
-        .train-card .value {
-            font-size: 16px;
-            font-weight: 700;
-            font-family: var(--f-mono);
-            margin-top: 1px;
-        }
-        .train-card .value.cyan {
-            color: var(--cyan);
-        }
-        .train-card .value.gold {
-            color: var(--gold);
-        }
-        .train-card .value.pink {
-            color: var(--pink);
-        }
-        .train-card .value.purple {
-            color: var(--purple);
-        }
-        .train-card .bar {
-            width: 100%;
-            height: 3px;
-            background: rgba(255, 255, 255, .04);
-            border-radius: 10px;
-            margin-top: 4px;
-            overflow: hidden;
-        }
-        .train-card .bar .fill {
-            height: 100%;
-            border-radius: 10px;
-            transition: width .8s ease;
-        }
-        .fill.cyan {
-            background: var(--cyan);
-        }
-        .fill.gold {
-            background: var(--gold);
-        }
-        .fill.pink {
-            background: var(--pink);
-        }
-        .fill.purple {
-            background: var(--purple);
-        }
-
-        .train-log {
-            max-height: 80px;
-            overflow-y: auto;
-            font-size: 9px;
-            color: var(--text-dim);
-            font-family: var(--f-mono);
-            background: var(--panel-flat);
-            border-radius: 10px;
-            padding: 8px 10px;
-            border: 1px solid var(--border-soft);
-        }
-        .train-log .entry {
-            padding: 2px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, .02);
-        }
-        .train-log .entry:last-child {
-            border-bottom: none;
-        }
-        .train-log .entry .time {
-            color: var(--text-faint);
-            margin-right: 4px;
-        }
-
-        /* ============================================================
            ❤️  БЛИЗКИЕ
            ============================================================ */
         .heart-card {
@@ -636,7 +770,7 @@
         }
 
         /* ============================================================
-           🏆  АНАЛИТИКА
+           📊  АНАЛИТИКА
            ============================================================ */
         .analytics-grid {
             display: grid;
@@ -752,40 +886,6 @@
             box-shadow: 0 0 8px rgba(0, 229, 255, .4);
         }
 
-        .btn {
-            background: rgba(0, 180, 255, .04);
-            border: 1px solid rgba(0, 180, 255, .04);
-            padding: 4px 12px;
-            border-radius: 30px;
-            color: var(--text-dim);
-            font-size: 9px;
-            cursor: pointer;
-            transition: .2s;
-            font-family: var(--f-mono);
-            touch-action: manipulation;
-        }
-        .btn:active {
-            transform: scale(.95);
-        }
-        .btn.gold {
-            border-color: rgba(255, 203, 61, .08);
-            color: var(--gold);
-        }
-        .btn.pink {
-            border-color: rgba(255, 92, 143, .08);
-            color: var(--pink);
-        }
-        .btn.wide {
-            width: 100%;
-            text-align: center;
-        }
-        .btn-group {
-            display: flex;
-            gap: 4px;
-            flex-wrap: wrap;
-            margin-bottom: 8px;
-        }
-
         .danger-zone {
             margin-top: 10px;
             padding-top: 10px;
@@ -867,11 +967,21 @@
             .bottom-nav {
                 padding: 4px 2px;
             }
-            .nav-btn .icon {
-                font-size: 16px;
+            .bottom-nav .nav-btn {
+                min-width: 44px;
+                padding: 4px 6px;
             }
-            .nav-btn {
+            .bottom-nav .nav-btn .icon {
+                font-size: 17px;
+            }
+            .bottom-nav .nav-btn .label {
                 font-size: 6px;
+            }
+            .title-section .hunter-name {
+                font-size: 20px;
+            }
+            .title-section .hunter-rank {
+                font-size: 10px;
             }
         }
         @media (max-width: 360px) {
@@ -898,13 +1008,22 @@
              🏠  ГЛАВНЫЙ ЭКРАН (ДАШБОРД)
              ============================================================ -->
         <div class="glass" id="dashboard">
-            <!-- ШАПКА -->
-            <div class="header">
-                <h1>⚔️ KAIN<small>▸ Система активирована</small></h1>
-                <div class="badges">
-                    <span class="badge gold" id="rankBadge">E-RANK</span>
-                    <span class="badge cyan" id="levelBadge">LV.1</span>
-                    <span class="badge" id="streakBadge">🔥0</span>
+            <!-- ТИТУЛЬНАЯ СЕКЦИЯ -->
+            <div class="title-section">
+                <div class="rank-glow" id="rankGlow"></div>
+                <div class="hunter-name">⚔️ KAIN</div>
+                <div class="hunter-rank" id="rankTitle">⚔️ НОВИЧОК</div>
+                <div class="hunter-stats">
+                    <span>🎯 <span class="num" id="hunterLevel">LV.1</span></span>
+                    <span>🔥 <span class="num" id="hunterStreak">0</span> дн.</span>
+                    <span>🏆 <span class="num" id="hunterRankLabel">E</span></span>
+                </div>
+                <div class="xp-progress">
+                    <div class="track"><div class="fill" id="rankProgressBar"></div></div>
+                    <div class="info">
+                        <span id="rankXPDisplay">0 XP</span>
+                        <span class="next-title" id="nextRankTitle">→ Искатель</span>
+                    </div>
                 </div>
             </div>
 
@@ -927,17 +1046,15 @@
                 </div>
             </div>
 
-            <!-- ПРОГРЕСС -->
-            <div class="progress-main">
-                <div class="track"><div class="fill" id="mainProgress"></div></div>
-                <div class="info">
-                    <span id="questDone">0 / 7</span>
-                    <span id="xpDisplay">0 XP</span>
-                </div>
-            </div>
-
             <!-- СПИСОК КВЕСТОВ -->
+            <div class="quest-section-title">
+                <span>📋 КВЕСТЫ</span>
+                <span class="count" id="questCount">0 / 7</span>
+            </div>
             <div class="quest-list" id="questList"></div>
+
+            <!-- КНОПКА ДОБАВЛЕНИЯ КВЕСТА -->
+            <button class="add-quest-btn" id="addQuestBtn">➕ Разовый квест</button>
 
             <!-- СОВЕТ -->
             <div class="tip" id="dailyTip">💡 Начни с выполнения квестов</div>
@@ -948,22 +1065,28 @@
              ============================================================ -->
         <div class="bottom-nav" id="bottomNav">
             <button class="nav-btn active" data-tab="tab-dashboard">
-                <span class="icon">🏠</span>Главная
+                <span class="icon">🏠</span>
+                <span class="label">Главная</span>
             </button>
             <button class="nav-btn" data-tab="tab-train">
-                <span class="icon">🥊</span>Тренир.
+                <span class="icon">🥊</span>
+                <span class="label">Тренир.</span>
             </button>
             <button class="nav-btn" data-tab="tab-food">
-                <span class="icon">🍎</span>Еда
+                <span class="icon">🍎</span>
+                <span class="label">Еда</span>
             </button>
             <button class="nav-btn" data-tab="tab-heart">
-                <span class="icon">❤️</span>Близкие
+                <span class="icon">❤️</span>
+                <span class="label">Близкие</span>
             </button>
             <button class="nav-btn" data-tab="tab-analytics">
-                <span class="icon">📊</span>Аналитика
+                <span class="icon">📊</span>
+                <span class="label">Аналитика</span>
             </button>
             <button class="nav-btn" data-tab="tab-settings">
-                <span class="icon">⚙️</span>Настройки
+                <span class="icon">⚙️</span>
+                <span class="label">Настройки</span>
             </button>
         </div>
 
@@ -1053,7 +1176,7 @@
 
     <script>
         // ================================================================
-        // 🗡️  FUEL FIGHTER — ПОЛНЫЙ ДВИЖОК v4.0
+        // 🗡️  FUEL FIGHTER v5.0 — ПОЛНЫЙ ДВИЖОК
         // ================================================================
 
         (function() {
@@ -1063,20 +1186,26 @@
             //   🧠  КОНФИГ
             // ════════════════════════════════════════════════
 
+            const RANKS = [
+                { id: 'E', label: 'НОВИЧОК', icon: '⚔️', xp: 0, glow: '' },
+                { id: 'E+', label: 'ИСКАТЕЛЬ', icon: '⚔️', xp: 200, glow: '' },
+                { id: 'D', label: 'БОЕЦ', icon: '⚔️', xp: 500, glow: '' },
+                { id: 'D+', label: 'ВЕТЕРАН', icon: '⚔️', xp: 1000, glow: 'gold' },
+                { id: 'C', label: 'МАСТЕР КЛИНКА', icon: '🗡️', xp: 2000, glow: 'gold' },
+                { id: 'C+', label: 'СТРАЖ', icon: '🛡️', xp: 3500, glow: 'gold' },
+                { id: 'B', label: 'ОХОТНИК', icon: '🏹', xp: 5000, glow: 'purple' },
+                { id: 'B+', label: 'РАЗРУШИТЕЛЬ', icon: '💀', xp: 7500, glow: 'purple' },
+                { id: 'A', label: 'ТЕНЬ', icon: '🌑', xp: 10000, glow: 'purple' },
+                { id: 'A+', label: 'ПРИЗРАК', icon: '👻', xp: 15000, glow: 'pink' },
+                { id: 'S', label: 'МОНАРХ ТЕНЕЙ', icon: '👑', xp: 25000, glow: 'pink' },
+                { id: 'SSS', label: 'ПОВЕЛИТЕЛЬ ТЬМЫ', icon: '🌟', xp: 50000, glow: 'gold' }
+            ];
+
             const CONFIG = {
                 WATER_GOAL: 2200,
                 CAL_GOAL: 2100,
                 PROTEIN_GOAL: 150,
                 BASE_XP: 100,
-                RANKS: [
-                    { id: 'E', label: 'E-RANK', totalXP: 0 },
-                    { id: 'D', label: 'D-RANK', totalXP: 800 },
-                    { id: 'C', label: 'C-RANK', totalXP: 2200 },
-                    { id: 'B', label: 'B-RANK', totalXP: 5000 },
-                    { id: 'A', label: 'A-RANK', totalXP: 10000 },
-                    { id: 'S', label: 'S-RANK', totalXP: 20000 },
-                    { id: 'SSS', label: 'SSS-RANK', totalXP: 50000 }
-                ],
                 QUESTS: [
                     { id: 'wake', label: '🌅 Восход', desc: 'Проснуться до 7:00', xp: 10, stat: 'will', val: 1 },
                     { id: 'exercise', label: '🏃 Зарядка', desc: '10+ мин упражнений', xp: 15, stat: 'agi', val: 1 },
@@ -1086,7 +1215,6 @@
                     { id: 'water', label: '💧 Восполнение', desc: 'Выпить 2.2+ л воды', xp: 10, stat: 'end', val: 1 },
                     { id: 'sleep', label: '🌙 Восстановление', desc: 'Сон 7.5+ ч', xp: 10, stat: 'end', val: 1 }
                 ],
-                TOPICS: ['🐍 Python', '🔐 Криптография', '🌐 Сети', '⚡ Алгоритмы', '🛡️ ИБ'],
                 STAT_META: {
                     will: { label: 'Воля', icon: '❤️' },
                     atk: { label: 'Атака', icon: '🗡️' },
@@ -1125,20 +1253,6 @@
                     { name: 'Огурец', icon: '🥒', cal: 15, protein: 0.5 },
                     { name: 'Протеин', icon: '💪', cal: 120, protein: 25 }
                 ],
-                ACHIEVEMENTS: [
-                    { id: 'streak7', icon: '🛡️', name: 'Железная воля', desc: 'Стрик 7 дней', target: 7,
-                    get: s => s.streak, reward: { stat: 'will', val: 10 } },
-                    { id: 'streak30', icon: '🌑', name: 'Тень Монарха', desc: 'Стрик 30 дней', target: 30,
-                        get: s => s.streak, reward: { all: 15 } },
-                    { id: 'level10', icon: '✨', name: 'Пробуждение', desc: 'LV. 10', target: 10, get: s => s.level,
-                        reward: { stat: 'mana', val: 10 } },
-                    { id: 'topics5', icon: '📚', name: 'Архимаг Кода', desc: '5 тем ИБ', target: 5, get: s => s.code
-                            .topics.length, reward: { stat: 'int', val: 8 } },
-                    { id: 'heart10', icon: '💞', name: 'Хранитель сердца', desc: '10 идей', target: 10, get: s => s
-                            .heart.ideasDone.length, reward: { stat: 'cha', val: 10 } },
-                    { id: 'days30', icon: '🏛️', name: 'Столп дисциплины', desc: '30 дней выполнено', target: 30,
-                        get: s => s.daysCompleted, reward: { stat: 'end', val: 12 } }
-                ],
                 FAKE_HUNTERS: ['Jester', 'Vex', 'Raven', 'Shadow', 'Lynx', 'Ghost', 'Wraith', 'Phantom']
             };
 
@@ -1150,7 +1264,6 @@
                 level: 1,
                 xp: 0,
                 totalXP: 0,
-                rankIdx: 0,
                 stats: { will: 10, atk: 10, def: 5, agi: 15, int: 12, end: 10, cha: 8, mana: 5 },
                 quests: CONFIG.QUESTS.map(() => false),
                 customQuests: [],
@@ -1161,7 +1274,6 @@
                 waterLast: null,
                 food: { cal: 0, protein: 0, log: [] },
                 artifacts: [],
-                unlockedAchievements: [],
                 totalDays: 0,
                 daysCompleted: 0,
                 training: { power: 0, flex: 0, tech: 0, endurance: 0, log: [] },
@@ -1171,7 +1283,15 @@
                 progress: { weight: 75, waist: 85, hips: 95 },
                 history: {},
                 settings: { sound: true },
-                companion: { flowers: 'Белые розы', food: 'Ищет себя', tiktok: 'Любит смотреть' }
+                companion: { flowers: 'Белые розы', food: 'Ищет себя', tiktok: 'Любит смотреть' },
+                epicQuests: {
+                    streak7: false,
+                    streak30: false,
+                    quests30: false,
+                    trainings50: false,
+                    code10: false,
+                    heart5: false
+                }
             };
             let fakeHunters = [];
 
@@ -1185,7 +1305,6 @@
                         level: state.level,
                         xp: state.xp,
                         totalXP: state.totalXP,
-                        rankIdx: state.rankIdx,
                         stats: state.stats,
                         quests: state.quests,
                         customQuests: state.customQuests,
@@ -1196,7 +1315,6 @@
                         waterLast: state.waterLast,
                         food: state.food,
                         artifacts: state.artifacts,
-                        unlockedAchievements: state.unlockedAchievements,
                         totalDays: state.totalDays,
                         daysCompleted: state.daysCompleted,
                         training: state.training,
@@ -1207,6 +1325,7 @@
                         history: state.history,
                         settings: state.settings,
                         companion: state.companion,
+                        epicQuests: state.epicQuests,
                         fakeHunters: fakeHunters
                     };
                     localStorage.setItem('fighterData', JSON.stringify(payload));
@@ -1296,14 +1415,21 @@
 
             function xpForLevel() { return CONFIG.BASE_XP + (state.level - 1) * 20; }
 
+            function getRankIndex() {
+                let idx = 0;
+                for (let i = RANKS.length - 1; i >= 0; i--) {
+                    if (state.totalXP >= RANKS[i].xp) { idx = i; break; }
+                }
+                return idx;
+            }
+
             function addXP(amount, label) {
                 state.xp += amount;
                 state.totalXP += amount;
                 sound.xp();
                 showToast(label ? '⚡ ' + label : '⚡ Опыт', label || 'Опыт получен.', amount);
                 checkLevelUp();
-                checkRankUp();
-                checkAchievements();
+                checkEpicQuests();
                 queueSave();
                 renderAll();
             }
@@ -1320,33 +1446,44 @@
                 }
             }
 
-            function checkRankUp() {
-                const next = CONFIG.RANKS[state.rankIdx + 1];
-                if (next && state.totalXP >= next.totalXP) {
-                    state.rankIdx++;
-                    sound.rankUp();
-                    showToast('🏆 РАНГ ПОВЫШЕН!', 'Новый ранг: ' + next.label);
-                    grantArtifact('⚔️ Клинок ' + next.label, '+5 ко всем статам');
-                    for (const k in state.stats) state.stats[k] += 5;
+            function checkEpicQuests() {
+                // Стрик 7 дней
+                if (!state.epicQuests.streak7 && state.streak >= 7) {
+                    state.epicQuests.streak7 = true;
+                    state.artifacts.push({ name: '🛡️ Железная воля', effect: 'Стрик 7 дней' });
+                    addXP(50, 'Эпический квест: Стрик 7 дней');
                 }
-            }
-
-            function grantArtifact(name, effect) {
-                state.artifacts.push({ name, effect });
-                showToast('🎁 АРТЕФАКТ ПОЛУЧЕН!', name + ': ' + effect);
-            }
-
-            function checkAchievements() {
-                CONFIG.ACHIEVEMENTS.forEach(a => {
-                    if (state.unlockedAchievements.includes(a.id)) return;
-                    if (a.get(state) >= a.target) {
-                        state.unlockedAchievements.push(a.id);
-                        if (a.reward.all) { for (const k in state.stats) state.stats[k] += a.reward.all; } else if (a
-                            .reward.stat) { state.stats[a.reward.stat] = (state.stats[a.reward.stat] || 0) + a
-                                .reward.val; }
-                        grantArtifact(a.icon + ' ' + a.name, 'Достижение разблокировано');
-                    }
-                });
+                // Стрик 30 дней
+                if (!state.epicQuests.streak30 && state.streak >= 30) {
+                    state.epicQuests.streak30 = true;
+                    state.artifacts.push({ name: '🌑 Тень Монарха', effect: 'Стрик 30 дней' });
+                    addXP(150, 'Эпический квест: Стрик 30 дней');
+                }
+                // 30 выполненных дней
+                if (!state.epicQuests.quests30 && state.daysCompleted >= 30) {
+                    state.epicQuests.quests30 = true;
+                    state.artifacts.push({ name: '🏛️ Столп дисциплины', effect: '30 дней выполнено' });
+                    addXP(100, 'Эпический квест: 30 дней');
+                }
+                // 50 тренировок
+                const totalTrainings = state.training.power + state.training.flex + state.training.tech;
+                if (!state.epicQuests.trainings50 && totalTrainings >= 50) {
+                    state.epicQuests.trainings50 = true;
+                    state.artifacts.push({ name: '💪 Мастер тела', effect: '50 тренировок' });
+                    addXP(80, 'Эпический квест: 50 тренировок');
+                }
+                // 10 тем ИБ
+                if (!state.epicQuests.code10 && state.code.topics.length >= 10) {
+                    state.epicQuests.code10 = true;
+                    state.artifacts.push({ name: '📚 Архимаг кода', effect: '10 тем ИБ' });
+                    addXP(80, 'Эпический квест: 10 тем ИБ');
+                }
+                // 5 идей для свиданий
+                if (!state.epicQuests.heart5 && state.heart.ideasDone.length >= 5) {
+                    state.epicQuests.heart5 = true;
+                    state.artifacts.push({ name: '💞 Хранитель сердца', effect: '5 идей для свиданий' });
+                    addXP(50, 'Эпический квест: 5 идей');
+                }
             }
 
             function todayStr() { return new Date().toISOString().split('T')[0]; }
@@ -1400,9 +1537,9 @@
             }
 
             function addCustomQuest() {
-                const label = prompt('Название разового квеста:');
+                const label = prompt('Название квеста:');
                 if (!label) return;
-                let xp = parseInt(prompt('Сколько XP он стоит?', '10'), 10);
+                let xp = parseInt(prompt('Сколько XP? (по умолчанию 10)', '10'), 10);
                 if (!Number.isFinite(xp) || xp <= 0) xp = 10;
                 state.customQuests.push({ id: 'c' + Date.now(), label, xp });
                 showToast('📌 Квест добавлен', label);
@@ -1437,18 +1574,6 @@
                 }
                 queueSave();
                 renderAll();
-            }
-
-            function clearFood() {
-                if (state.food.log.length === 0) return;
-                if (confirm('Очистить дневник питания?')) {
-                    state.food.cal = 0;
-                    state.food.protein = 0;
-                    state.food.log = [];
-                    showToast('🗑️ Дневник очищен', 'Начни заново');
-                    queueSave();
-                    renderAll();
-                }
             }
 
             // ════════════════════════════════════════════════
@@ -1537,7 +1662,7 @@
                 return CONFIG.FAKE_HUNTERS.map((name, i) => ({
                     name,
                     level: Math.max(1, Math.floor(Math.random() * (state.level + 2)) - 1),
-                    rankIdx: Math.min(CONFIG.RANKS.length - 1, Math.floor((i + 1) / 2)),
+                    rankIdx: Math.min(RANKS.length - 1, Math.floor((i + 1) / 2)),
                     xp: (i + 1) * 60 + Math.floor(Math.random() * 30)
                 }));
             }
@@ -1547,7 +1672,7 @@
                     if (Math.random() < .3) {
                         h.level += 0.2;
                         h.xp += 5 + Math.floor(Math.random() * 15);
-                        h.rankIdx = Math.min(CONFIG.RANKS.length - 1, Math.floor(h.level / 3));
+                        h.rankIdx = Math.min(RANKS.length - 1, Math.floor(h.level / 3));
                     }
                 });
                 fakeHunters.sort((a, b) => b.level - a.level);
@@ -1601,7 +1726,17 @@
             //   🖥️  РЕНДЕР
             // ════════════════════════════════════════════════
 
+            let renderQueued = false;
+
+            function scheduleRender() {
+                if (renderQueued) return;
+                renderQueued = true;
+                requestAnimationFrame(() => { renderQueued = false;
+                    renderAll(); });
+            }
+
             function renderAll() {
+                renderTitle();
                 renderDashboard();
                 renderTrain();
                 renderFood();
@@ -1610,21 +1745,39 @@
                 renderSettings();
             }
 
+            function renderTitle() {
+                const rankIdx = getRankIndex();
+                const rank = RANKS[rankIdx];
+                const nextRank = RANKS[Math.min(rankIdx + 1, RANKS.length - 1)];
+
+                const titleEl = document.getElementById('rankTitle');
+                titleEl.textContent = rank.icon + ' ' + rank.label;
+                titleEl.className = 'hunter-rank' + (rank.glow ? ' ' + rank.glow : '');
+
+                const glowEl = document.getElementById('rankGlow');
+                glowEl.className = 'rank-glow' + (rank.glow ? ' ' + rank.glow : '');
+
+                document.getElementById('hunterLevel').textContent = 'LV.' + state.level;
+                document.getElementById('hunterStreak').textContent = state.streak;
+                document.getElementById('hunterRankLabel').textContent = rank.id;
+
+                const nextXp = nextRank.xp;
+                const currentXp = rank.xp;
+                const progress = Math.min(100, ((state.totalXP - currentXp) / (nextXp - currentXp)) * 100);
+                document.getElementById('rankProgressBar').style.width = Math.min(100, progress) + '%';
+                document.getElementById('rankXPDisplay').textContent = state.totalXP + ' XP';
+
+                if (rankIdx < RANKS.length - 1) {
+                    document.getElementById('nextRankTitle').textContent = '→ ' + nextRank.icon + ' ' + nextRank.label;
+                } else {
+                    document.getElementById('nextRankTitle').textContent = '🌟 МАКСИМАЛЬНЫЙ РАНГ';
+                }
+            }
+
             function renderDashboard() {
-                const rank = CONFIG.RANKS[state.rankIdx];
-                document.getElementById('rankBadge').textContent = rank.label;
-                document.getElementById('levelBadge').textContent = 'LV.' + state.level;
-                document.getElementById('streakBadge').textContent = '🔥' + state.streak;
-
-                const needed = xpForLevel();
-                const pct = Math.min(100, (state.xp / needed) * 100);
-                document.getElementById('mainProgress').style.width = pct + '%';
-                document.getElementById('xpDisplay').textContent = Math.floor(state.xp) + ' XP';
-
                 const done = state.quests.filter(Boolean).length;
-                document.getElementById('questDone').textContent = done + ' / ' + CONFIG.QUESTS.length;
+                document.getElementById('questCount').textContent = done + ' / ' + CONFIG.QUESTS.length;
 
-                // Быстрые индикаторы
                 const proteinPct = Math.min(100, (state.food.protein / CONFIG.PROTEIN_GOAL) * 100);
                 document.getElementById('qProtein').textContent = state.food.protein + 'г';
                 document.getElementById('qProteinBar').style.width = proteinPct + '%';
@@ -1637,7 +1790,6 @@
                 document.getElementById('qWater').textContent = Math.floor(state.water) + 'мл';
                 document.getElementById('qWaterBar').style.width = waterPct + '%';
 
-                // Квесты
                 const list = document.getElementById('questList');
                 let html = CONFIG.QUESTS.map((q, i) => {
                     const d = state.quests[i];
@@ -1649,22 +1801,21 @@
                         '</div>';
                 }).join('');
                 html += state.customQuests.map((q, i) =>
-                    '<div class="quest-item custom" data-custom="' + i + '">' +
+                    '<div class="quest-item" data-custom="' + i + '">' +
                     '<div class="check">✓</div>' +
                     '<div class="q-info"><div class="q-title">' + q.label + '</div><div class="q-desc">Разовый</div></div>' +
                     '<div class="q-xp">+' + q.xp + '</div>' +
-                    '<div class="q-remove" data-remove="' + i + '" style="font-size:12px;color:var(--text-faint);padding:0 4px;">✕</div>' +
+                    '<div class="q-remove" data-remove="' + i + '">✕</div>' +
                     '</div>'
                 ).join('');
                 list.innerHTML = html;
 
-                // Совет
                 let tip = '💡 Начни с выполнения квестов';
                 if (state.food.protein < CONFIG.PROTEIN_GOAL * 0.6) tip = '⚠️ Мало белка! Съешь курицу или творог.';
                 else if (state.food.cal < CONFIG.CAL_GOAL * 0.7) tip = '🍚 Нужно больше калорий! Добавь рис или гречку.';
                 else if (done === CONFIG.QUESTS.length) tip = '🔥 Отлично! Все квесты выполнены!';
                 else if (state.food.protein >= CONFIG.PROTEIN_GOAL && state.food.cal >= CONFIG.CAL_GOAL) tip =
-                    '🔥 Ты в норме по питанию! Продолжай в том же духе.';
+                    '🔥 Ты в норме по питанию!';
                 document.getElementById('dailyTip').textContent = tip;
             }
 
@@ -1690,13 +1841,11 @@
             }
 
             function renderFood() {
-                // Статистика
                 document.getElementById('foodCal').textContent = state.food.cal + 'ккал';
                 document.getElementById('foodProtein').textContent = state.food.protein + 'г';
                 const pct = Math.min(100, Math.round((state.food.cal / CONFIG.CAL_GOAL) * 100));
                 document.getElementById('foodProgress').textContent = pct + '%';
 
-                // Продукты
                 const grid = document.getElementById('foodGrid');
                 grid.innerHTML = CONFIG.FOOD_DB.map((p, i) =>
                     '<div class="food-product" data-food="' + i + '">' +
@@ -1711,7 +1860,6 @@
                     });
                 });
 
-                // Дневник
                 const diary = document.getElementById('foodDiary');
                 if (state.food.log.length === 0) {
                     diary.innerHTML = '<div class="empty">Пока ничего не съедено</div>';
@@ -1722,13 +1870,11 @@
                     ).join('');
                 }
 
-                // Вода
                 const waterPct = Math.min(100, (state.water / CONFIG.WATER_GOAL) * 100);
                 document.getElementById('waterStatus').textContent = Math.floor(state.water) + ' / ' + CONFIG.WATER_GOAL +
                     ' мл';
                 document.getElementById('waterFill').style.width = waterPct + '%';
 
-                // Совет
                 let tip = '🍽️ Добавь продукты';
                 if (state.food.protein < CONFIG.PROTEIN_GOAL * 0.6) tip = '⚠️ Мало белка! Съешь курицу или творог.';
                 else if (state.food.protein < CONFIG.PROTEIN_GOAL) tip = '💪 Добавь ещё белка до нормы.';
@@ -1762,7 +1908,7 @@
                 const prod = Math.round((done / CONFIG.QUESTS.length) * 100);
                 const t = state.training;
                 const trainAvg = Math.round((t.power + t.flex + t.tech + t.endurance) / 4);
-                const study = Math.min(100, Math.round((state.code.topics.length / CONFIG.TOPICS.length) * 100));
+                const study = Math.min(100, Math.round((state.code.topics.length / 10) * 100));
                 const heart = Math.min(100, Math.round((state.heart.time / 120) * 100));
 
                 const cards = [
@@ -1806,7 +1952,6 @@
                     '<input type="file" id="importFile" accept="application/json" hidden>' +
                     '<div class="danger-zone"><button class="btn pink wide" id="resetBtn">⟳ Перерождение</button></div>';
 
-                // События настроек
                 document.getElementById('soundSwitch').addEventListener('click', function() {
                     state.settings.sound = !state.settings.sound;
                     this.classList.toggle('on');
@@ -1882,7 +2027,6 @@
             // ════════════════════════════════════════════════
 
             function wireEvents() {
-                // Навигация
                 document.querySelectorAll('.nav-btn').forEach(btn => {
                     btn.addEventListener('click', function() {
                         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -1890,12 +2034,10 @@
                         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                         const target = document.getElementById(this.dataset.tab);
                         if (target) target.classList.add('active');
-                        // Прокручиваем вверх
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     });
                 });
 
-                // Квесты
                 document.getElementById('questList').addEventListener('click', function(e) {
                     initAudio();
                     const rm = e.target.closest('[data-remove]');
@@ -1914,11 +2056,8 @@
                         renderAll(); }
                 });
 
-                // Разовый квест
-                document.getElementById('addQuestBtn') && document.getElementById('addQuestBtn').addEventListener('click',
-                    addCustomQuest);
+                document.getElementById('addQuestBtn').addEventListener('click', addCustomQuest);
 
-                // Вода
                 document.querySelectorAll('[data-water]').forEach(btn => {
                     btn.addEventListener('click', function() {
                         const v = this.dataset.water;
@@ -1926,16 +2065,13 @@
                     });
                 });
 
-                // Тренировки
                 document.getElementById('trainStrike').addEventListener('click', trainStrike);
                 document.getElementById('trainStretch').addEventListener('click', trainStretch);
                 document.getElementById('trainTech').addEventListener('click', trainTech);
 
-                // Близкие
                 document.getElementById('heartAddTime').addEventListener('click', addHeartTime);
                 document.getElementById('heartIdea').addEventListener('click', randomIdea);
 
-                // Активация звука
                 document.addEventListener('touchstart', initAudio, { once: true });
                 document.addEventListener('click', initAudio, { once: true });
             }
@@ -1949,7 +2085,7 @@
                 rolloverIfNeeded();
                 if (!fakeHunters.length) fakeHunters = seedFakeHunters();
                 if (!loaded) {
-                    grantArtifact('🗡️ Кинжал Новичка', '+2 к Атаке');
+                    state.artifacts.push({ name: '🗡️ Кинжал Новичка', effect: '+2 к Атаке' });
                     state.stats.atk += 2;
                     saveData();
                 }
